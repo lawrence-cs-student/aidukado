@@ -15,7 +15,7 @@ export default function Sidebar() {
     }`;
 
   return (
-    <div className="h-full w-[15%] bg-[#A6ABC8]">
+    <div className="h-full w-[15%] min-w-[15%] bg-[#F1F2F7]">
       <div className="flex space-x-3 p-[15%]">
         <div className="rounded-full h-[30px] w-[30px] bg-[#45495E] flex justify-center items-center font-bold text-white">
           A
@@ -31,7 +31,7 @@ export default function Sidebar() {
           <h2 className="font-bold">Dashboard</h2>
         </NavLink>
 
-        <NavLink to="/learn-and-test" className={linkClasses}>
+        <NavLink to="/aipretest" className={linkClasses}>
           <MdMenuBook size={32} />
           <h2 className="font-bold">AI Test & Learn</h2>
         </NavLink>
@@ -54,6 +54,10 @@ export default function Sidebar() {
           <MdContactSupport size={32} />
           <h2 className="font-bold">Help</h2>
         </NavLink>
+        
+
+        
+        
       </div>
     </div>
   );
