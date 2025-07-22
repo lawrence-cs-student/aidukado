@@ -5,7 +5,7 @@ import React, {useState} from "react";
 export default function AILEARN() {
 
   const [file, setFile] = useState(null);
-  const [extractedText, setExtractedText] = useState("")
+  const [questions, setQuestions] = useState("")
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -22,7 +22,7 @@ export default function AILEARN() {
       headers: {"Content-Type" : "multipart/form-data"}
     });
       
-      setExtractedText(response.data.extracted_text)
+      setQuestions(response.data.pretest)
 
 
     } catch (error) {
@@ -31,20 +31,23 @@ export default function AILEARN() {
     
   };
 
+  
+
 
   return (
-    <div className="bg-[#424874] h-full w-[100%] flex flex-col items-center justify-center gap-5 ">
-      {extractedText ? (
+    <div className="bg-[#424874] h-full w-[100%] flex flex-col items-center justify-center gap-10 ">
+      <h1 className="text-4xl font-bold">Welcome to AI Test and Learn</h1>
+      {questions.length > 0 ? (
         <div className="bg-white p-[1%] mt-2 rounded shadow-md w-[50%] max-h-[60vh] overflow-y-auto">
-          <h2 className="text-black">Extracted Text:</h2>
-          <pre className="whitespace-pre-wrap break-all text-black overflow-x-auto max-w-full">{extractedText}</pre>
+          <h2 className="text-black">Pretest:</h2>
+          <pre className="whitespace-pre-wrap break-all text-black overflow-x-auto max-w-full">{JSON.parse(questions)}</pre>
         </div>
       ) : (
-        <p className="text-white italic">No extracted text yet.</p>
+        <p className="text-white italic">Upload a File and Generate Pretest.</p>
       )}
 
       
-      <h1 className="text-4xl font-bold">Welcome to AI Test and Learn</h1>
+      
       <label
         htmlFor="file-upload"
         className="cursor-pointer p-3 rounded-full bg-[#F1F2F7] text-[#424874] hover:bg-black hover:text-white"
@@ -57,7 +60,7 @@ export default function AILEARN() {
         className="hidden"
         onChange={handleFileChange}
       />
-      <button onClick={handleUpload}>Upload</button>
+      <button className="text-[#333446] bg-white font-bold" onClick={handleUpload}>Upload and Generate</button>
     </div>
   )
   
