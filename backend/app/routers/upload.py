@@ -1,6 +1,6 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
 from ..utils.extractors import extract_pdf_text, extract_document_text
-
+from ..utils.generate_pretest import generate_pretest
 
 router = APIRouter()
 
@@ -22,5 +22,7 @@ async def upload(file:UploadFile = File(...)):
     else:
         text = extract_document_text(contents)
         
-        
-    return {"extracted_text": text}
+    questions = generate_pretest(text)    
+    print(questions)
+    
+    return {"pretest": questions}
