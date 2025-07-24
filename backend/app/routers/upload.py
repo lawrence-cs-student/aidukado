@@ -23,6 +23,4 @@ async def upload(file:UploadFile = File(...)):
         text = extract_document_text(contents)
         
     questions = generate_pretest(text)    
-    print(questions)
-    
     return {"pretest": questions}
