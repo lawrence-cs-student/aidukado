@@ -1,5 +1,5 @@
 import re
-    
+
 def parse_questions(raw_questions: str):
     questions = []
     current = {}
@@ -22,4 +22,5 @@ def parse_questions(raw_questions: str):
     if current:
         questions.append(current)
     
+    print(questions)
     return questions

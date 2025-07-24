@@ -4,7 +4,6 @@ import validator from 'validator';
 import { NavLink } from "react-router-dom";
 
 function App() {
-  //const [items, setItems] = useState([]);
   const [form, setForm] = useState({ first_name: '', last_name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
 
@@ -30,17 +29,6 @@ function App() {
     return Object.keys(newErrors).length === 0;
   };
 
-  /**
-   * Fetch existing items from the API.
-   */
-  const fetchItems = async () => {
-    try {
-      const res = await axios.get('http://localhost:8000/students/');
-      setItems(res.data);
-    } catch (err) {
-      console.error('Error fetching students:', err);
-    }
-  };
 
   /**
    * Handle form submission.
@@ -67,9 +55,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
 
   const hasError = (field) => Boolean(errors[field]);
 
