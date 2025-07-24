@@ -1,6 +1,4 @@
 import re
-
-
     
 def parse_questions(raw_questions: str):
     questions = []
