@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import axios from 'axios'; 
 
-export default function PretestQuestions({ questions = [] }) {
+export default function PretestQuestions({ questions = [], title }) {
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [incorrectAnswersData, setIncorrectAnswersData] = useState([]);
+  const [score, setScore] = useState(0);
 
 
   const getOption = (optionString) => {
@@ -20,35 +21,42 @@ export default function PretestQuestions({ questions = [] }) {
   };
 
   const handleSubmit = async () => {
-    setSubmitted(true); 
 
     const IncorrectAnswers = [];
+    let totalScore = 0;
+    let unAnsweredQuestions = 0;
 
     questions.forEach((q, index) => {
       const questionIdentifier = q.questionNumber || index;
       const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
       const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase(): null;
 
-      if (currentUserAnswer !== correctAnswer) {
-        IncorrectAnswers.push({
-          question: q.question,
+      if (currentUserAnswer === null) {
+        unAnsweredQuestions = unAnsweredQuestions + 1
+      } else if(currentUserAnswer !== correctAnswer){
+          IncorrectAnswers.push({
+          question: q.question,   
+          options : q.options,
           userAnswer: currentUserAnswer,
-          correctAnswer: correctAnswer,
-          userAnswerText: q.options.find(
-            (opt) => getOption(opt) === currentUserAnswer
-          ),
-          correctAnswerText: q.options.find(
-            (opt) => getOption(opt) === correctAnswer
-          ) || 'N/A'
+          correctAnswer: correctAnswer
         });
+      } else{
+        totalScore += 1
       }
     });
 
+    if (unAnsweredQuestions > 0){
+      alert("Please answer all questions before submitting")
+    } else{
     setIncorrectAnswersData(IncorrectAnswers); 
+    setScore(totalScore)
+    console.log(JSON.stringify({IncorrectAnswers}))
+
+    setSubmitted(true);
 
     if (IncorrectAnswers.length > 0) {
       try {
-        const response = await axios.post('http://localhost:8000/question_model/', { incorrectAnswers: IncorrectAnswers } 
+        const response = await axios.post('http://localhost:8000/question_model', {IncorrectAnswers } 
         );
 
         if (response.status >= 200 && response.status < 300) {
@@ -71,11 +79,12 @@ export default function PretestQuestions({ questions = [] }) {
         }
       }
     }
+    }
   };
 
   return (
     <div className="bg-white ">
-      <h1 className="text-2xl font-bold mb-4">Pretest Questions</h1>
+      <h1 className="text-2xl font-bold mb-4">{title}</h1>
       {questions.length > 0 ? (
         questions.map((q, index) => {
           const questionIdentifier = q.questionNUmber || index;
@@ -135,6 +144,12 @@ export default function PretestQuestions({ questions = [] }) {
         >
           Submit Answers
         </button>
+      )}
+      
+      {submitted && (
+        <div className="mt-4">
+          <p className="font-bold text-green-600 text-4xl">score: {score}</p>
+        </div>
       )}
     </div>
   );
