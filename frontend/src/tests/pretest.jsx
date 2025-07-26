@@ -4,30 +4,29 @@ import axios from 'axios';
 export default function PretestQuestions({ questions = [], title }) {
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [incorrectAnswersData, setIncorrectAnswersData] = useState([]);
   const [score, setScore] = useState(0);
 
 
   const getOption = (optionString) => {
     return optionString.trim().charAt(0).toUpperCase();
-  };
+  }; // clean option and get only the first letter 
 
-  const handleOptionChange = (questionNumber, selectedOptionText) => {
+  const handleOptionChange = (question, selectedOptionText) => {
     const selectedOption = getOption(selectedOptionText);
     setUserAnswers((prev) => ({
       ...prev,
-      [questionNumber]: selectedOption,
+      [question]: selectedOption,
     }));
-  };
+  }; //return user answer to a question ex. B
 
   const handleSubmit = async () => {
 
     const IncorrectAnswers = [];
     let totalScore = 0;
-    let unAnsweredQuestions = 0;
+    let unAnsweredQuestions = 0; 
 
-    questions.forEach((q, index) => {
-      const questionIdentifier = q.questionNumber || index;
+    questions.forEach((q, index) => { 
+      const questionIdentifier = q.question || index;
       const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
       const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase(): null;
 
@@ -48,12 +47,11 @@ export default function PretestQuestions({ questions = [], title }) {
     if (unAnsweredQuestions > 0){
       alert("Please answer all questions before submitting")
     } else{
-    setIncorrectAnswersData(IncorrectAnswers); 
-    setScore(totalScore)
-    console.log(JSON.stringify({IncorrectAnswers}))
 
+    setScore(totalScore)
     setSubmitted(true);
 
+    // sends data to the backend where the user answers incorrect
     if (IncorrectAnswers.length > 0) {
       try {
         const response = await axios.post('http://localhost:8000/question_model', {IncorrectAnswers } 
@@ -86,12 +84,12 @@ export default function PretestQuestions({ questions = [], title }) {
     <div className="bg-white ">
       <h1 className="text-2xl font-bold mb-4">{title}</h1>
       {questions.length > 0 ? (
-        questions.map((q, index) => {
-          const questionIdentifier = q.questionNUmber || index;
+        questions.map((q, index) => { 
+          const questionIdentifier = q.question || index; 
 
-          const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
+          const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null ;
 
-          const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase() : null;
+          const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase() : null; //if-else users answer 
 
           return (
             <div key={questionIdentifier} className="mb-6 text-black">
@@ -104,8 +102,8 @@ export default function PretestQuestions({ questions = [], title }) {
                         type="radio"
                         name={`question-${questionIdentifier}`} 
                         value={opt} 
-                        checked={currentUserAnswer === getOption(opt)}
                         onChange={() => handleOptionChange(questionIdentifier, opt)}
+                        checked={currentUserAnswer === getOption(opt)} 
                         disabled={submitted}
                       />
                       <span>{opt}</span>

@@ -21,7 +21,6 @@ function AppContent() {
           <Route path="/aipretest" element={<AIPretest />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
           <Route path="*" element={<h1>404 - Page Not Found</h1>} />
         </Routes>
       </main>

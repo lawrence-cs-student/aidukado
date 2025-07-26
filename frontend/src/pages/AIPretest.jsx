@@ -1,7 +1,7 @@
 import { MdDriveFolderUpload } from "react-icons/md";
 import axios from "axios";
 import React, {useState, useTransition} from "react";
-import PretestQuestions from "../tests/pretest"
+import PretestQuestions from "../tests/pretest";
 
 export default function AILEARN() {
 
@@ -26,8 +26,6 @@ export default function AILEARN() {
       
     console.log("Received questions:", response.data.pretest); 
     setQuestions(response.data.pretest)
-    
-    
 
     } catch (error) {
       console.error("Upload error:", error)
@@ -56,11 +54,11 @@ export default function AILEARN() {
 
       {questions.length > 0 && (
         <div>
-          <PretestQuestions questions={questions} />
+          <PretestQuestions questions={questions} title={"Pretest Questions"} />
         </div>
       )}
 
     </div>
   )
-  
+   
 }
