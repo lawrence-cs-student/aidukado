@@ -21,6 +21,6 @@ def parse_questions(raw_questions: str):
     
     if current:
         questions.append(current)
-    
+      
     print(questions)
     return questions

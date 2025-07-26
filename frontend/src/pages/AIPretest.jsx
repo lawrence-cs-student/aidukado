@@ -1,7 +1,7 @@
 import { MdDriveFolderUpload } from "react-icons/md";
 import axios from "axios";
-import React, {useState, useTransition} from "react";
-import PretestQuestions from "../tests/pretest"
+import React, {useState} from "react";
+import PreTest from "../components/Test"
 
 export default function AILEARN() {
 
@@ -35,9 +35,17 @@ export default function AILEARN() {
     
   };
 
+  const handleDataReceived = () => {
+    submitData()
+  }
+
+  const submitData = async () => {
+    // send the data to generate lesson
+  }
+
   return (
-    <div className="bg-[#424874] h-full w-[100%] flex flex-col items-center justify-center gap-10 ">
-      <h1 className="text-4xl font-bold">Welcome to AI Test and Learn</h1>
+    <main className="bg-[#424874] h-full w-[100%] flex flex-col items-center justify-center gap-2 ">
+      <h1 className="text-4xl font-bold mt-16">Welcome to AI Test and Learn</h1>
         <p className="text-white italic">Upload a File and Generate Pretest.</p>
       
       <label
@@ -55,12 +63,13 @@ export default function AILEARN() {
       <button className="text-[#333446] bg-white font-bold" onClick={handleUpload}>Upload and Generate</button>
 
       {questions.length > 0 && (
-        <div>
-          <PretestQuestions questions={questions} />
+        <div className="w-[80%] h-[60%] flex justify-center items-center">
+          <PreTest questions={questions} onDataSend={handleDataReceived}/>
+          <button>Review</button>
         </div>
       )}
 
-    </div>
+    </main>
   )
   
 }

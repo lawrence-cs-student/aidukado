@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import axios from 'axios'; 
 
-export default function PretestQuestions({ questions = [] }) {
+export default function Test({ questions = [], onDataSend }) {
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [incorrectAnswersData, setIncorrectAnswersData] = useState([]);
 
 
+  const sendData = () => {
+    const mistakes = incorrectAnswersData
+    onDataSend(mistakes)
+  }
+
+  
   const getOption = (optionString) => {
     return optionString.trim().charAt(0).toUpperCase();
   };
@@ -74,7 +80,7 @@ export default function PretestQuestions({ questions = [] }) {
   };
 
   return (
-    <div className="bg-white ">
+    <div className="bg-white overflow-auto h-2/4 w-3/4">
       <h1 className="text-2xl font-bold mb-4">Pretest Questions</h1>
       {questions.length > 0 ? (
         questions.map((q, index) => {
@@ -130,7 +136,7 @@ export default function PretestQuestions({ questions = [] }) {
 
       {!submitted && questions.length > 0 && (
         <button
-          onClick={handleSubmit}
+          onClick={() => {handleSubmit(); sendData();}}
           className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Submit Answers
