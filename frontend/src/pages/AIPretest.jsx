@@ -1,7 +1,12 @@
 import { MdDriveFolderUpload } from "react-icons/md";
 import axios from "axios";
+<<<<<<< HEAD
 import React, {useState} from "react";
 import PreTest from "../components/Test"
+=======
+import React, {useState, useTransition} from "react";
+import PretestQuestions from "../tests/pretest";
+>>>>>>> co-user-branch
 
 export default function AILEARN() {
 
@@ -26,8 +31,6 @@ export default function AILEARN() {
       
     console.log("Received questions:", response.data.pretest); 
     setQuestions(response.data.pretest)
-    
-    
 
     } catch (error) {
       console.error("Upload error:", error)
@@ -63,13 +66,18 @@ export default function AILEARN() {
       <button className="text-[#333446] bg-white font-bold" onClick={handleUpload}>Upload and Generate</button>
 
       {questions.length > 0 && (
+<<<<<<< HEAD
         <div className="w-[80%] h-[60%] flex justify-center items-center">
           <PreTest questions={questions} onDataSend={handleDataReceived}/>
           <button>Review</button>
+=======
+        <div>
+          <PretestQuestions questions={questions} title={"Pretest Questions"} />
+>>>>>>> co-user-branch
         </div>
       )}
 
     </main>
   )
-  
+   
 }

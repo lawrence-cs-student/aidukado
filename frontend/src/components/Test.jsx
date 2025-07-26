@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import axios from 'axios'; 
 
+<<<<<<< HEAD:frontend/src/components/Test.jsx
 export default function Test({ questions = [], onDataSend }) {
+=======
+export default function PretestQuestions({ questions = [], title }) {
+>>>>>>> co-user-branch:frontend/src/tests/pretest.jsx
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [incorrectAnswersData, setIncorrectAnswersData] = useState([]);
+  const [score, setScore] = useState(0);
 
 
   const sendData = () => {
@@ -15,46 +19,52 @@ export default function Test({ questions = [], onDataSend }) {
   
   const getOption = (optionString) => {
     return optionString.trim().charAt(0).toUpperCase();
-  };
+  }; // clean option and get only the first letter 
 
-  const handleOptionChange = (questionNumber, selectedOptionText) => {
+  const handleOptionChange = (question, selectedOptionText) => {
     const selectedOption = getOption(selectedOptionText);
     setUserAnswers((prev) => ({
       ...prev,
-      [questionNumber]: selectedOption,
+      [question]: selectedOption,
     }));
-  };
+  }; //return user answer to a question ex. B
 
   const handleSubmit = async () => {
-    setSubmitted(true); 
 
     const IncorrectAnswers = [];
+    let totalScore = 0;
+    let unAnsweredQuestions = 0; 
 
-    questions.forEach((q, index) => {
-      const questionIdentifier = q.questionNumber || index;
+    questions.forEach((q, index) => { 
+      const questionIdentifier = q.question || index;
       const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
       const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase(): null;
 
-      if (currentUserAnswer !== correctAnswer) {
-        IncorrectAnswers.push({
-          question: q.question,
+      if (currentUserAnswer === null) {
+        unAnsweredQuestions = unAnsweredQuestions + 1
+      } else if(currentUserAnswer !== correctAnswer){
+          IncorrectAnswers.push({
+          question: q.question,   
+          options : q.options,
           userAnswer: currentUserAnswer,
-          correctAnswer: correctAnswer,
-          userAnswerText: q.options.find(
-            (opt) => getOption(opt) === currentUserAnswer
-          ),
-          correctAnswerText: q.options.find(
-            (opt) => getOption(opt) === correctAnswer
-          ) || 'N/A'
+          correctAnswer: correctAnswer
         });
+      } else{
+        totalScore += 1
       }
     });
 
-    setIncorrectAnswersData(IncorrectAnswers); 
+    if (unAnsweredQuestions > 0){
+      alert("Please answer all questions before submitting")
+    } else{
 
+    setScore(totalScore)
+    setSubmitted(true);
+
+    // sends data to the backend where the user answers incorrect
     if (IncorrectAnswers.length > 0) {
       try {
-        const response = await axios.post('http://localhost:8000/question_model/', { incorrectAnswers: IncorrectAnswers } 
+        const response = await axios.post('http://localhost:8000/question_model', {IncorrectAnswers } 
         );
 
         if (response.status >= 200 && response.status < 300) {
@@ -77,18 +87,19 @@ export default function Test({ questions = [], onDataSend }) {
         }
       }
     }
+    }
   };
 
   return (
     <div className="bg-white overflow-auto h-2/4 w-3/4">
       <h1 className="text-2xl font-bold mb-4">Pretest Questions</h1>
       {questions.length > 0 ? (
-        questions.map((q, index) => {
-          const questionIdentifier = q.questionNUmber || index;
+        questions.map((q, index) => { 
+          const questionIdentifier = q.question || index; 
 
-          const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
+          const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null ;
 
-          const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase() : null;
+          const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase() : null; //if-else users answer 
 
           return (
             <div key={questionIdentifier} className="mb-6 text-black">
@@ -101,8 +112,8 @@ export default function Test({ questions = [], onDataSend }) {
                         type="radio"
                         name={`question-${questionIdentifier}`} 
                         value={opt} 
-                        checked={currentUserAnswer === getOption(opt)}
                         onChange={() => handleOptionChange(questionIdentifier, opt)}
+                        checked={currentUserAnswer === getOption(opt)} 
                         disabled={submitted}
                       />
                       <span>{opt}</span>
@@ -141,6 +152,12 @@ export default function Test({ questions = [], onDataSend }) {
         >
           Submit Answers
         </button>
+      )}
+      
+      {submitted && (
+        <div className="mt-4">
+          <p className="font-bold text-green-600 text-4xl">score: {score}</p>
+        </div>
       )}
     </div>
   );
