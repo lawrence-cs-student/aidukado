@@ -1,14 +1,9 @@
 import { MdDriveFolderUpload } from "react-icons/md";
 import axios from "axios";
-<<<<<<< HEAD
 import React, {useState} from "react";
-import PreTest from "../components/Test"
-=======
-import React, {useState, useTransition} from "react";
-import PretestQuestions from "../tests/pretest";
->>>>>>> co-user-branch
+import PretestQuestions from "../components/Test";
 
-export default function AILEARN() {
+export default function AIPretest() {
 
   const [file, setFile] = useState(null);
   const [questions, setQuestions] = useState([])
@@ -38,46 +33,36 @@ export default function AILEARN() {
     
   };
 
-  const handleDataReceived = () => {
-    submitData()
-  }
-
-  const submitData = async () => {
-    // send the data to generate lesson
-  }
-
   return (
-    <main className="bg-[#424874] h-full w-[100%] flex flex-col items-center justify-center gap-2 ">
-      <h1 className="text-4xl font-bold mt-16">Welcome to AI Test and Learn</h1>
-        <p className="text-white italic">Upload a File and Generate Pretest.</p>
+    <div className="bg-[#424874] h-full w-[100%] flex flex-col items-center justify-center gap-10 ">
+      {questions.length === 0 &&(
+        <>
+          <h1 className="text-4xl font-bold">Welcome to AI Test and Learn</h1>
+          <p className="text-white italic">Upload a File and Generate Pretest.</p>
       
-      <label
-        htmlFor="file-upload"
-        className="cursor-pointer p-3 rounded-full bg-[#F1F2F7] text-[#424874] hover:bg-black hover:text-white"
-      >
-        <MdDriveFolderUpload size={30} />
-      </label>
-      <input
-        id="file-upload"
-        type="file"
-        className="hidden"
-        onChange={handleFileChange}
-      />
-      <button className="text-[#333446] bg-white font-bold" onClick={handleUpload}>Upload and Generate</button>
+          <label
+            htmlFor="file-upload"
+            className="cursor-pointer p-3 rounded-full bg-[#F1F2F7] text-[#424874] hover:bg-black hover:text-white"
+          >
+            <MdDriveFolderUpload size={30} />
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          <button className="text-[#333446] bg-white font-bold" onClick={handleUpload}>Upload and Generate</button>
+        </>
+      )}
 
       {questions.length > 0 && (
-<<<<<<< HEAD
-        <div className="w-[80%] h-[60%] flex justify-center items-center">
-          <PreTest questions={questions} onDataSend={handleDataReceived}/>
-          <button>Review</button>
-=======
         <div>
           <PretestQuestions questions={questions} title={"Pretest Questions"} />
->>>>>>> co-user-branch
         </div>
       )}
 
-    </main>
+    </div>
   )
    
 }

@@ -1,11 +1,14 @@
 import google.generativeai as genai
 import json
 
-genai.configure(api_key = "")
+
+genai.configure(api_key = "AIzaSyDKQ6uASlEbzeilq8z6TanbL-PKKSxh4yM")
 
 model = genai.GenerativeModel("gemini-2.0-flash")
 
-def generate_lesson(data: str):
+def generate_lesson(data: list[dict]):
+    
+    
     prompt = f"""
         You are an Intelligent AI Teacher
         Below is a list of questions that a student got wrong in a quiz. Each question includes the student's answer, the correct answer, and the topic
@@ -21,5 +24,5 @@ def generate_lesson(data: str):
         """
     
     response = model.generate_content(prompt)
-    
+    print(response.text)
     return response.text

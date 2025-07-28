@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from .routers import upload
+from .routers import lesson
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -13,3 +14,4 @@ app.add_middleware(
 )
 
 app.include_router(upload.router)
+app.include_router(lesson.router)

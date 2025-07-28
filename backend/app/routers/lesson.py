@@ -7,7 +7,11 @@ router = APIRouter()
 
 @router.post("/generate_lesson")
 
-async def generate_lesson(questions : List[QuestionItem]):
-    generated_lesson = generate_lesson(questions)
+async def lesson(questions : List[QuestionItem]):
+    print("oks")
+    print(questions)
+    question_dicts = [q.dict() for q in questions]
+    
+    generated_lesson = generate_lesson(question_dicts)
 
     return {"lesson" : generated_lesson}

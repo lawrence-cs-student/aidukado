@@ -1,9 +1,9 @@
-import React from "react";
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import AIPretest from "./pages/AIPretest";
 import Dashboard from "./pages/Dashboard";
+import Lesson from './pages/Lesson';
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 
@@ -19,6 +19,7 @@ function AppContent() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/aipretest" element={<AIPretest />} />
+          <Route path="/lesson" element={<Lesson/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<h1>404 - Page Not Found</h1>} />

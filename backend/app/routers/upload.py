@@ -15,7 +15,7 @@ async def upload(file:UploadFile = File(...)):
     
     contents = await file.read()
     
-    print(f"File size: {len(contents)} bytes")
+    # print(f"File size: {len(contents)} bytes")
     
     if filename.endswith(".pdf"):
         text = extract_pdf_text(contents)

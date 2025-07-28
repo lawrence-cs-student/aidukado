@@ -1,120 +1,117 @@
 import React, { useState } from "react";
-import axios from 'axios'; 
+import storeIncorrectAnswers from "../store/storeIncorrectAnswers";
+import { useNavigate } from "react-router-dom"
 
-<<<<<<< HEAD:frontend/src/components/Test.jsx
-export default function Test({ questions = [], onDataSend }) {
-=======
+// 🧠 Main component
 export default function PretestQuestions({ questions = [], title }) {
->>>>>>> co-user-branch:frontend/src/tests/pretest.jsx
+
+  const navigate = useNavigate();
+
+  const setIncorrectAnswers = storeIncorrectAnswers((state) => state.setIncorrectAnswers)
+
+
   const [userAnswers, setUserAnswers] = useState({});
+
+
   const [submitted, setSubmitted] = useState(false);
+
+
   const [score, setScore] = useState(0);
 
-
-  const sendData = () => {
-    const mistakes = incorrectAnswersData
-    onDataSend(mistakes)
-  }
-
-  
+  // 🔠 Utility: extract and clean the answer letter from option string, e.g., "A. Apple" → "A"
   const getOption = (optionString) => {
     return optionString.trim().charAt(0).toUpperCase();
-  }; // clean option and get only the first letter 
+  };
 
+  // 🖱️ Called when user selects an option for a question
   const handleOptionChange = (question, selectedOptionText) => {
-    const selectedOption = getOption(selectedOptionText);
+    const selectedOption = getOption(selectedOptionText); // extract the "A"/"B"/etc
     setUserAnswers((prev) => ({
       ...prev,
-      [question]: selectedOption,
+      [question]: selectedOption, // updates the specific question's answer
     }));
-  }; //return user answer to a question ex. B
+  };
 
+  // 📤 Called when user clicks the "Submit Answers" button
   const handleSubmit = async () => {
+    const IncorrectAnswers = [];         // collect wrong answers for later use
+    let totalScore = 0;                  // count of correct answers
+    let unAnsweredQuestions = 0;         // detect if anything was left unanswered
 
-    const IncorrectAnswers = [];
-    let totalScore = 0;
-    let unAnsweredQuestions = 0; 
-
+    // 🔁 Go through each question and check user's answer
     questions.forEach((q, index) => { 
       const questionIdentifier = q.question || index;
-      const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
-      const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase(): null;
 
+      const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
+      const currentUserAnswer = userAnswers[questionIdentifier]
+        ? userAnswers[questionIdentifier].trim().toUpperCase()
+        : null;
+
+      // ❗ If no answer was selected
       if (currentUserAnswer === null) {
-        unAnsweredQuestions = unAnsweredQuestions + 1
-      } else if(currentUserAnswer !== correctAnswer){
-          IncorrectAnswers.push({
+        unAnsweredQuestions += 1;
+      } 
+      // ❌ If the answer is incorrect
+      else if (currentUserAnswer !== correctAnswer) {
+        IncorrectAnswers.push({
           question: q.question,   
           options : q.options,
-          userAnswer: currentUserAnswer,
-          correctAnswer: correctAnswer
+          answer: correctAnswer,
+          user_answer: currentUserAnswer
+          
         });
-      } else{
-        totalScore += 1
+      } 
+      // ✅ Correct answer
+      else {
+        totalScore += 1;
       }
     });
 
+    // ⛔ Don't allow submission if any question is left blank
     if (unAnsweredQuestions > 0){
-      alert("Please answer all questions before submitting")
-    } else{
+      alert("Please answer all questions before submitting");
+    } else {
+      setScore(totalScore);  // save the score
+      setSubmitted(true);    // lock the quiz and show results
 
-    setScore(totalScore)
-    setSubmitted(true);
-
-    // sends data to the backend where the user answers incorrect
-    if (IncorrectAnswers.length > 0) {
-      try {
-        const response = await axios.post('http://localhost:8000/question_model', {IncorrectAnswers } 
-        );
-
-        if (response.status >= 200 && response.status < 300) {
-          console.log("Incorrect answers sent successfully to backend!");
-          console.log("Backend response data:", response.data);
-        } else {
-          console.error("Failed to send incorrect answers to backend. Status:", response.status);
-          console.error("Backend error data:", response.data);
-        }
-      } catch (error) {
-        console.error("Error sending data to backend:", error);
-        if (error.response) {
-          console.error("Server responded with error:", error.response.data);
-          console.error("Status:", error.response.status);
-          console.error("Headers:", error.response.headers);
-        } else if (error.request) {
-          console.error("No response received:", error.request);
-        } else {
-          console.error("Error setting up request:", error.message);
-        }
-      }
-    }
+      setIncorrectAnswers(IncorrectAnswers);
     }
   };
 
+  const handleClick = () => {
+    navigate('/lesson')
+  }
+
   return (
-    <div className="bg-white overflow-auto h-2/4 w-3/4">
-      <h1 className="text-2xl font-bold mb-4">Pretest Questions</h1>
+    <div className="bg-white ">
+      <h1 className="text-2xl font-bold mb-4">{title}</h1>
+
+      {/* 📋 Loop through each question */}
       {questions.length > 0 ? (
         questions.map((q, index) => { 
-          const questionIdentifier = q.question || index; 
+          const questionIdentifier = q.question || index;
 
-          const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null ;
-
-          const currentUserAnswer = userAnswers[questionIdentifier] ? userAnswers[questionIdentifier].trim().toUpperCase() : null; //if-else users answer 
+          const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
+          const currentUserAnswer = userAnswers[questionIdentifier]
+            ? userAnswers[questionIdentifier].trim().toUpperCase()
+            : null;
 
           return (
             <div key={questionIdentifier} className="mb-6 text-black">
               <p className="font-semibold">{q.question}</p>
+
+              {/* 🔘 Radio buttons for each option */}
               <ul className="ml-4">
                 {q.options.map((opt, i) => (
                   <li key={i}>
                     <label className="flex items-center space-x-2">
                       <input
                         type="radio"
-                        name={`question-${questionIdentifier}`} 
-                        value={opt} 
+                        name={`question-${questionIdentifier}`}  // group by question
+                        value={opt}
                         onChange={() => handleOptionChange(questionIdentifier, opt)}
-                        checked={currentUserAnswer === getOption(opt)} 
-                        disabled={submitted}
+                        checked={currentUserAnswer === getOption(opt)} // pre-fill if selected
+                        disabled={submitted}  // disable after submission
                       />
                       <span>{opt}</span>
                     </label>
@@ -122,6 +119,7 @@ export default function PretestQuestions({ questions = [], title }) {
                 ))}
               </ul>
 
+              {/* ✅❌ Show result after submitting */}
               {submitted && (
                 <div className="mt-1">
                   {currentUserAnswer === correctAnswer ? (
@@ -130,9 +128,11 @@ export default function PretestQuestions({ questions = [], title }) {
                     <p className="text-red-600">
                       ❌ Incorrect. Correct Answer:{" "}
                       <span className="font-semibold">
-                        {q.options.find(
-                          (opt) => getOption(opt) === correctAnswer
-                        ) || 'N/A'}
+                        {
+                          q.options.find(
+                            (opt) => getOption(opt) === correctAnswer
+                          ) || 'N/A'
+                        }
                       </span>
                     </p>
                   )}
@@ -145,18 +145,21 @@ export default function PretestQuestions({ questions = [], title }) {
         <p>No questions found.</p>
       )}
 
+      {/* 📤 Submit Button (only shows before submission) */}
       {!submitted && questions.length > 0 && (
         <button
-          onClick={() => {handleSubmit(); sendData();}}
+          onClick={handleSubmit}
           className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Submit Answers
         </button>
       )}
       
+      {/* 🎯 Show Score after submission */}
       {submitted && (
         <div className="mt-4">
           <p className="font-bold text-green-600 text-4xl">score: {score}</p>
+          <button className = "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={handleClick}>Learn</button>
         </div>
       )}
     </div>
