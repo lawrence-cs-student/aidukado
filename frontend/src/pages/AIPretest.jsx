@@ -1,7 +1,7 @@
 import { MdDriveFolderUpload } from "react-icons/md";
 import axios from "axios";
 import React, {useState} from "react";
-import PretestQuestions from "../components/Test";
+import Test from "../components/Test";
 
 export default function AIPretest() {
 
@@ -71,7 +71,7 @@ export default function AIPretest() {
 
       {!loading && questions.length > 0 && (
         <div>
-          <PretestQuestions questions={questions} title={"Pretest Questions"} />
+          <Test questions={questions} title={"Pretest Questions"} />
         </div>
       )}
 
