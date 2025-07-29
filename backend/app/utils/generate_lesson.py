@@ -24,5 +24,4 @@ def generate_lesson(data: list[dict]):
         """
     
     response = model.generate_content(prompt)
-    print(response.text)
     return response.text

@@ -8,7 +8,7 @@ model = genai.GenerativeModel("gemini-2.0-flash")
 
 def generate_pretest(content: str):
     prompt = f""" 
-        Based on the content below, generate a 5-question multiple choice pretest with 4 options each and indicate the right answer
+        Based on the content below, generate a 5-question multiple choice with 4 options each and indicate the right answer
         
         Content:
         \"\"\"{content}\"\"\"

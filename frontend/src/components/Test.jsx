@@ -43,9 +43,7 @@ export default function PretestQuestions({ questions = [], title }) {
       const questionIdentifier = q.question || index;
 
       const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
-      const currentUserAnswer = userAnswers[questionIdentifier]
-        ? userAnswers[questionIdentifier].trim().toUpperCase()
-        : null;
+      const currentUserAnswer = userAnswers[questionIdentifier]? userAnswers[questionIdentifier].trim().toUpperCase(): null;
 
       // ❗ If no answer was selected
       if (currentUserAnswer === null) {
@@ -83,7 +81,7 @@ export default function PretestQuestions({ questions = [], title }) {
   }
 
   return (
-    <div className="bg-white ">
+    <div className="absolute top-0 left-[15%] w-[85%] h-screen overflow-y-auto p-6 bg-[#333446] text-white">
       <h1 className="text-2xl font-bold mb-4">{title}</h1>
 
       {/* 📋 Loop through each question */}
@@ -97,7 +95,7 @@ export default function PretestQuestions({ questions = [], title }) {
             : null;
 
           return (
-            <div key={questionIdentifier} className="mb-6 text-black">
+            <div key={questionIdentifier} className="mb-6 text-white">
               <p className="font-semibold">{q.question}</p>
 
               {/* 🔘 Radio buttons for each option */}
