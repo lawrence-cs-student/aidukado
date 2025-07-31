@@ -163,6 +163,16 @@ export default function PretestQuestions({ questions = [], title }) {
       )}
 
 
+      
+      
+      {/* 🎯 Show Score after submission */}
+      {submitted && (
+        <div className="mt-4">
+          <p className="font-bold text-green-600 text-4xl">score: {score}</p>
+          <button className = "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={handleClick}>Learn</button>
+        </div>
+      )}
+
       {/* 📤 Submit Button (only shows before submission) */}
       {!submitted && currentPage === totalPages && (
         <button
@@ -171,14 +181,6 @@ export default function PretestQuestions({ questions = [], title }) {
         >
           Submit Answers
         </button>
-      )}
-      
-      {/* 🎯 Show Score after submission */}
-      {submitted && (
-        <div className="mt-4">
-          <p className="font-bold text-green-600 text-4xl">score: {score}</p>
-          <button className = "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={handleClick}>Learn</button>
-        </div>
       )}
     </div>
   );

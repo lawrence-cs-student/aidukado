@@ -2,12 +2,15 @@ import { MdDriveFolderUpload } from "react-icons/md";
 import axios from "axios";
 import React, {useState} from "react";
 import Test from "../components/Test";
+import storePostTestLesson from "../store/storePostTestLesson";
+
 
 export default function AIPretest() {
 
   const [file, setFile] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const setExtractedText = storePostTestLesson((state) => state.setExtractedText)
 
 
   const handleFileChange = (e) => {
@@ -29,7 +32,9 @@ export default function AIPretest() {
     });
       
     console.log("Received questions:", response.data.pretest); 
+    console.log("Extracted Text: ", response.data.extractedText)
     setQuestions(response.data.pretest)
+    setExtractedText(response.data.extractedText)
 
     } catch (error) {
       console.error("Upload error:", error)
