@@ -1,13 +1,17 @@
 import storeIncorrectAnswers from "../store/storeIncorrectAnswers"
+import storePostTestLesson from "../store/storePostTestLesson"
 import axios from "axios"
-import { useState, useEffect } from "react"
+import { useEffect} from "react"
 import LoadingAnimation from "../components/Loading"
+import { useNavigate } from "react-router-dom"
 
 export default function Lesson() {
 
     const incorrectAnswers = storeIncorrectAnswers((state) => state.incorrectAnswers)
-    const [lesson, setLesson] = useState("");
-
+    const lesson = storePostTestLesson((state) => state.lesson);
+    const setLesson = storePostTestLesson((state) => state.setLesson);
+    
+    const navigate = useNavigate();
 
     const handleSubmit = async () => {
         try {
@@ -31,7 +35,9 @@ export default function Lesson() {
     }
 }, []);
 
-
+    const handleClick = () => {
+        navigate('/postTest')
+    }
 
     return (
         <main className="w-full h-full bg-[#333446] p-8 text-white flex flex-col items-center justify-center">
@@ -40,11 +46,15 @@ export default function Lesson() {
             {lesson && lesson.length > 0 ? (
             <div className="w-[80%] h-auto bg-white text-black rounded-xl shadow-lg p-6 overflow-y-auto whitespace-pre-wrap">
                 <pre className="whitespace-pre-wrap break-words">{lesson}</pre>
+                <div className="mt-6 flex justify-center" >
+                    <button className = "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={handleClick} >Take Post Test</button>
+                </div>
             </div>
             ) : (
             <LoadingAnimation />
             )}
         </main>
+        
 );
 
 }

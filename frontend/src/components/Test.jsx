@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import storeIncorrectAnswers from "../store/storeIncorrectAnswers";
 import { useNavigate } from "react-router-dom"
+import Pagination from "../components/Pagination";
 
 // 🧠 Main component
 export default function PretestQuestions({ questions = [], title }) {
@@ -17,6 +18,16 @@ export default function PretestQuestions({ questions = [], title }) {
 
 
   const [score, setScore] = useState(0);
+
+  //For Pagination
+  const questionPerPage = 3;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const indexOfLastQuestion = currentPage * questionPerPage;
+  const indexOfFirstQuestion = indexOfLastQuestion - questionPerPage;
+  const currentQuestions = questions.slice(indexOfFirstQuestion, indexOfLastQuestion);
+
+  const totalPages = Math.ceil(questions.length / questionPerPage);
 
   // 🔠 Utility: extract and clean the answer letter from option string, e.g., "A. Apple" → "A"
   const getOption = (optionString) => {
@@ -43,9 +54,7 @@ export default function PretestQuestions({ questions = [], title }) {
       const questionIdentifier = q.question || index;
 
       const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
-      const currentUserAnswer = userAnswers[questionIdentifier]
-        ? userAnswers[questionIdentifier].trim().toUpperCase()
-        : null;
+      const currentUserAnswer = userAnswers[questionIdentifier]? userAnswers[questionIdentifier].trim().toUpperCase(): null;
 
       // ❗ If no answer was selected
       if (currentUserAnswer === null) {
@@ -83,12 +92,12 @@ export default function PretestQuestions({ questions = [], title }) {
   }
 
   return (
-    <div className="bg-white ">
+    <div className="absolute top-0 left-[15%] w-[85%] h-screen overflow-y-auto p-6 bg-[#333446] text-white">
       <h1 className="text-2xl font-bold mb-4">{title}</h1>
 
       {/* 📋 Loop through each question */}
-      {questions.length > 0 ? (
-        questions.map((q, index) => { 
+      {currentQuestions.length > 0 ? (
+        currentQuestions.map((q, index) => { 
           const questionIdentifier = q.question || index;
 
           const correctAnswer = q.answer ? q.answer.trim().toUpperCase() : null;
@@ -97,7 +106,7 @@ export default function PretestQuestions({ questions = [], title }) {
             : null;
 
           return (
-            <div key={questionIdentifier} className="mb-6 text-black">
+            <div key={questionIdentifier} className="mb-6 text-white">
               <p className="font-semibold">{q.question}</p>
 
               {/* 🔘 Radio buttons for each option */}
@@ -145,15 +154,16 @@ export default function PretestQuestions({ questions = [], title }) {
         <p>No questions found.</p>
       )}
 
-      {/* 📤 Submit Button (only shows before submission) */}
-      {!submitted && questions.length > 0 && (
-        <button
-          onClick={handleSubmit}
-          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Submit Answers
-        </button>
+      {questions.length > questionPerPage && !submitted && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       )}
+
+
+      
       
       {/* 🎯 Show Score after submission */}
       {submitted && (
@@ -161,6 +171,16 @@ export default function PretestQuestions({ questions = [], title }) {
           <p className="font-bold text-green-600 text-4xl">score: {score}</p>
           <button className = "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={handleClick}>Learn</button>
         </div>
+      )}
+
+      {/* 📤 Submit Button (only shows before submission) */}
+      {!submitted && currentPage === totalPages && (
+        <button
+          onClick={handleSubmit}
+          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Submit Answers
+        </button>
       )}
     </div>
   );

@@ -40,10 +40,13 @@ function App() {
     if (!validate()) return;
 
     try {
-      await axios.post('http://localhost:8000/students/', form);
+      await axios.post('http://localhost:8000/signup', form, {headers: {
+        'Content-Type': 'application/json'
+      }});
       setForm({ first_name: '', last_name: '', email: '', password: '' });
       setErrors({});
       fetchItems();
+      console.log(form)
     } catch (err) {
       if (err.response && err.response.status === 400 && err.response.data.detail === 'Email already exists') {
       setErrors({ email: 'This email already exist, you may want to Login' });

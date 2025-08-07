@@ -21,6 +21,6 @@ async def upload(file:UploadFile = File(...)):
         text = extract_pdf_text(contents)
     else:
         text = extract_document_text(contents)
-        
+    
     questions = generate_pretest(text)    
-    return {"pretest": questions}
+    return {"pretest": questions, "extractedText": text}
