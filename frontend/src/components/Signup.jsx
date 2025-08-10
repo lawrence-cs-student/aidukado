@@ -40,9 +40,7 @@ function App() {
     if (!validate()) return;
 
     try {
-      await axios.post('http://localhost:8000/signup', form, {headers: {
-        'Content-Type': 'application/json'
-      }});
+      await axios.post('http://localhost:8000/signup', form);
       setForm({ first_name: '', last_name: '', email: '', password: '' });
       setErrors({});
       fetchItems();

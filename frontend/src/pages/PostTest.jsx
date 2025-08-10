@@ -1,11 +1,12 @@
 import Test from '../components/Test'
 import storePostTestLesson from '../store/storePostTestLesson'
+import storeGeneratedLesson from '../store/storeGeneratedLesson'
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 
 export default function PostTest() {
     const [questions, setQuestions] = useState([]);
-    const lesson = storePostTestLesson((state) => state.lesson)
+    const lesson = storeGeneratedLesson((state) => state.lesson)
     const origFile = storePostTestLesson((state) => state.extractedText)
     const [loading, setLoading] = useState(false);
 
@@ -25,6 +26,7 @@ export default function PostTest() {
             fetchPostTest();
         }
     }, [lesson])
+    console.log("Lesson type:", typeof origFile);
 
     return(
         <div className='w-full h-full bg-[#424874] flex justify-center items-center'>
