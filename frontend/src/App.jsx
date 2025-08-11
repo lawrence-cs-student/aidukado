@@ -17,7 +17,7 @@ function AppContent() {
       {!hideSidebar && <Sidebar />}
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<Navigate to="/signup" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/aipretest" element={<AIPretest />} />
           <Route path="/lesson" element={<Lesson/>}/>

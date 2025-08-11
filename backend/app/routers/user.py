@@ -16,10 +16,13 @@ def get_db():
 
 @router.post ("/signup")
 def signup(user:UserCreate, db: Session = Depends(get_db)):
-    user_data = user.dict()
-    user_data['password'] = hash_password(user_data['password'])
+    password = hash_password(user.password)
 
-    new_user = User(data=user.dict())
+    new_user = User(
+        last_name = user.last_name,
+        first_name = user.first_name,
+        email = user.email,
+        password = password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

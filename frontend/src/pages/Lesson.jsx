@@ -1,5 +1,5 @@
 import storeIncorrectAnswers from "../store/storeIncorrectAnswers"
-import storePostTestLesson from "../store/storePostTestLesson"
+import storeGeneratedLesson from "../store/storeGeneratedLesson"
 import axios from "axios"
 import { useEffect} from "react"
 import LoadingAnimation from "../components/Loading"
@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom"
 export default function Lesson() {
 
     const incorrectAnswers = storeIncorrectAnswers((state) => state.incorrectAnswers)
-    const lesson = storePostTestLesson((state) => state.lesson);
-    const setLesson = storePostTestLesson((state) => state.setLesson);
+    const lesson = storeGeneratedLesson((state) => state.lesson);
+    const setLesson = storeGeneratedLesson((state) => state.setLesson);
     
     
     const navigate = useNavigate();
