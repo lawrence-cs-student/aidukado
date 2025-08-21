@@ -7,6 +7,9 @@ import Lesson from './pages/Lesson';
 import PostTest from './pages/PostTest';
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import StudentArea from './pages/StudentArea';
+import SelectedSubject from './pages/SelectedSubject';
+import RoleProtectedRoute from './components/RoleProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
@@ -17,13 +20,43 @@ function AppContent() {
       {!hideSidebar && <Sidebar />}
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/aipretest" element={<AIPretest />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <RoleProtectedRoute allowed_roles={["student", "admin", "teacher"]}>
+                <Dashboard />
+              </RoleProtectedRoute>
+            } 
+          />
+          <Route 
+            path="subjects" 
+            element={
+              <RoleProtectedRoute allowed_roles={["student"]}>
+                <StudentArea />
+              </RoleProtectedRoute>
+            }
+          />
+          <Route 
+            path="/aipretest" 
+            element={
+              <RoleProtectedRoute allowed_roles={"teacher"}>
+                <AIPretest />
+              </RoleProtectedRoute>
+            }
+          />
           <Route path="/lesson" element={<Lesson/>}/>
           <Route path="/postTest" element={<PostTest/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route 
+            path="/selectedSubject" 
+            element={
+              <RoleProtectedRoute allowed_roles={"student"}>
+                <SelectedSubject />
+              </RoleProtectedRoute>
+            } 
+          />
           <Route path="*" element={<h1>404 - Page Not Found</h1>} />
         </Routes>
       </main>

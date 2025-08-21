@@ -1,177 +1,177 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import validator from 'validator';
+import { useState } from "react";
+import axios from "axios";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function App() {
-  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', password: '' });
+
+export default function Signup() {
+
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    role: "",
+    first_name: "",
+    last_name: ""
+  });
+
   const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  /**
-   * Validate form fields.
-   * Returns true if the form is valid, otherwise false and populates the errors state.
-   */
+
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value}));
+  }
+
   const validate = () => {
-    const newErrors = {};
+    const currentErrors = {};
 
-    if (!form.last_name.trim()) newErrors.last_name = 'Last name is required';
-    if (!form.first_name.trim()) newErrors.first_name = 'First name is required';
-
-    if (!form.email.trim()) {
-       newErrors.email = 'Email is required';
-    } else if (!validator.isEmail(form.email.trim())) {
-      newErrors.email = 'Enter a valid email address';
+    if (!formData.email) {
+      currentErrors.email = "Email is required";
+    }else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      currentErrors.email = "Email is invalid";
     }
 
-    if (!form.password.trim() || form.password.length < 8) newErrors.password = 'Password must be atleast 8 characters long';
+    if (!formData.password) {
+      currentErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      currentErrors.password = "Password must be at least 8 characters";
+    }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    if (!formData.role) {
+      currentErrors.role = "Role is required";
+    }
 
+    if (!formData.first_name) {
+      currentErrors.first_name = "First Name is required";
+    }
 
-  /**
-   * Handle form submission.
-   */
+    if (!formData.last_name) {
+      currentErrors.last_name = "Last Name is required";
+    }
+
+    return currentErrors;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validate();
 
-    // Front‑end validation
-    if (!validate()) return;
+    if(Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+    setLoading(true);
 
     try {
-      await axios.post('http://localhost:8000/signup', form);
-      setForm({ first_name: '', last_name: '', email: '', password: '' });
-      setErrors({});
-      fetchItems();
-      console.log(form)
-    } catch (err) {
-      if (err.response && err.response.status === 400 && err.response.data.detail === 'Email already exists') {
-      setErrors({ email: 'This email already exist, you may want to Login' });
-    } else if(err.response && err.response.status === 400 && err.response.data.detail === 'Email domain does not exist.') {
-      setErrors({ email: 'Enter a valid email address' });
-    } else{
-      console.error('Error submitting form:', err);
-    }
-    }
-  };
+      const res = await axios.post("http://localhost:8000/auth/signup", formData, 
+        {headers: {'Content-Type' : 'application/json'}
+      });
 
+      setSuccess(`User Created: ${res.data.email}`)
 
-  const hasError = (field) => Boolean(errors[field]);
+      setFormData({
+        email: "",
+        password: "",
+        role: "",
+        first_name: "",
+        last_name: ""
+      })
+      navigate("/login");
+
+    }catch (err) {
+      if (err.response?.data?.detail) {
+          setErrors({api : err.response.data.detail})
+      } else {
+          setErrors({api : "Network Error"});
+      }
+    }finally {
+      setLoading(false);
+    }
+
+  }
+
+  
+
+  const inputClass = "w-4/5 h-[10%] border-solid border-2 border-[#C9CCD5] bg-transparent rounded-lg text-[#10375C] p-[1%]"
+  const labelClass = "text-[#102E50] font-bold opacity-75"
 
   return (
-    <div className="bg-[#333446] flex h-full w-full flex flex-col side-background-signup">
-        <div className="absolute left-[70%] top-[40%]">
-            <h1 className="text-white opacity-[0.7] text-4xl">
-                <span className="block">Already Have an Account?</span>
-            </h1>
-            <NavLink to={"/login"}>
-                <button className="w-[100%] h-[10%] mt-[6%] p-1 bg-[#333446] text-white">Login</button>
-            </NavLink>
-        </div>
-        <div className='flex h-full w-[60%] bg-white justify-center items-center flex-col'>
-            <form
-                onSubmit={handleSubmit}
-                noValidate
-                className="bg-white p-8 rounded-xl shadow-md w-full max-w-md outline"
-                style={{ outlineColor: '#7F8CAA' }}
-            >
-                <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Signup</h2>
+    <div className="w-full h-screen flex flex-row ">
+      <div className="w-[55%] h-full bg-white flex flex-col justify-center items-center" >
+        
+        {errors.api && <p className="text-red-800">{errors.api}</p>}
+        {success && <p className="text-green-800">{success}</p>}
 
-                {/* Last Name */}
-                <div className="mb-4">
-                <label className="block text-gray-500 font-medium mb-2">Last Name</label>
-                <input
-                    type="text"
-                    value={form.last_name}
-                    onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-                    placeholder="Last Name"
-                    className={
-                    `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2  placeholder-gray-400` +
-                    (hasError('last_name')
-                        ? 'border-red-500 focus:ring-red-400'
-                        : 'focus:ring-blue-400')
-                    }
-                />
-                {hasError('last_name') && (
-                    <p className="text-red-500 text-sm mt-1">{errors.last_name}</p>
-                )}
-                </div>
+        
+        <form onSubmit={handleSubmit}
+              className="flex flex-col w-3/5 h-1/2 gap-[2%] "
+        >
+          <h2 className="text-[#102E50] text-4xl font-bold mb-[2%]">Sign Up</h2>
 
-                {/* First Name */}
-                <div className="mb-4">
-                <label className="block text-gray-500 font-medium mb-2">First Name</label>
-                <input
-                    type="text"
-                    value={form.first_name}
-                    onChange={(e) => setForm({ ...form, first_name: e.target.value })}
-                    placeholder="First Name"
-                    className={
-                    `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2  placeholder-gray-400` +
-                    (hasError('first_name')
-                        ? 'border-red-500 focus:ring-red-400'
-                        : 'focus:ring-blue-400')
-                    }
-                />
-                {hasError('first_name') && (
-                    <p className="text-red-500 text-sm mt-1">{errors.first_name}</p>
-                )}
-                </div>
+          <label className={labelClass}>First Name:</label>
+          <input
+            type="text"
+            name="first_name"
+            value={formData.first_name}
+            onChange={handleChange}
+            className={inputClass}
+          />
 
-                {/* Email */}
-                <div className="mb-4">
-                <label className="block text-gray-500 font-medium mb-2">Email</label>
-                <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="Email"
-                    className={
-                    `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ` +
-                    (hasError('email')
-                        ? 'border-red-500 focus:ring-red-400'
-                        : 'focus:ring-blue-400')
-                    }
-                />
-                {hasError('email') && (
-                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                )}
-                </div>
+          <label className={labelClass}>Last Name:</label>
+          <input 
+            type="text"
+            name="last_name"
+            value={formData.last_name}
+            onChange={handleChange}
+            className={inputClass}
+          />
 
-                {/* Password */}
-                <div className="mb-4">
-                <label className="block text-gray-500 font-medium mb-2">Password</label>
-                <input
-                    type="password"
-                    value={form.password}
-                    onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    placeholder="Password"
-                    className={
-                    `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 placeholder-gray-400 ` +
-                    (hasError('password')
-                        ? 'border-red-500 focus:ring-red-400'
-                        : 'focus:ring-blue-400')
-                    }
-                />
-                <label className="block text-gray-300 font-smallmb-2">Password must be 8-14 characters long</label>
-                {hasError('password') && (
-                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                )}
-                </div>
+          <label className={labelClass}>Email:</label>
+          <input 
+            type="text"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className={inputClass}
+          />
 
-                {/* Submit */}
-                <button
-                type="submit"
-                disabled={!form.first_name || !form.last_name || !form.email || !form.password}
-                className="w-full text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 disabled:opacity-50"
-                style={{ backgroundColor: '#333446' }}
-                >
-                Signup
-                </button>
-            </form>
-        </div>
+          <label className={labelClass}>Password:</label>
+          <input 
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className={inputClass}
+          />
+
+          <label className={labelClass}>Role</label>
+          <select name="role" onChange={handleChange} className={inputClass}>
+            <option value="">Select a role</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+          <button type="submit" className="w-4/5 mt-[1%] bg-[#10375C] text-white transition-transform duration-200 hover:scale-95">
+            {loading ? "signing up..." : "signup"}
+          </button>
+        </form>
+      </div>
+
+      <div className="w-[45%] h-full flex justify-center items-center bg-black side-background-signup">
+          <h1 className="text-white opacity-[0.9] text-4xl">
+              Already Have an Account?
+          </h1>
+          <NavLink className="w-1/5 h-[5%]" to={"/login"}>
+              <button className="w-full h-full mt-[6%] p-1 bg-[#102E50] text-white transition-transform duration-200 hover:scale-95">Login</button>
+          </NavLink>
+      </div>
+
+      
     </div>
-  );
-}
+  )
 
-export default App;
+}

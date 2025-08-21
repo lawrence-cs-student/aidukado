@@ -5,14 +5,38 @@ import {
   MdBarChart,
   MdAccountCircle,
   MdContactSupport,
+  MdLogout,
+
 } from "react-icons/md";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import useUserRoleStore from "../store/storeUserRole";
+import axios from "axios";
+
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+  const userRole = useUserRoleStore((state) => (state.userRole))
+  const clearUserRole = useUserRoleStore((state => (state.clearUserRole)))
   const linkClasses = ({ isActive }) =>
     `flex items-center space-x-2 px-2 py-1 rounded ${
       isActive ? "bg-[#45495E] text-white" : "text-[#45495E]"
     }`;
+
+  const handleLogout = async () => {
+    clearUserRole();
+    try {
+      const response = await axios.post("http://localhost:8000/logout",
+      {},
+      {withCredentials: true}
+    )
+
+      if(response.data.message === "logged out successfully") {
+        navigate("/login")
+      }
+    } catch (err) {
+      console.error("Logout Failed", err)
+    }
+  }
 
   return (
     <div className="h-full w-[15%] min-w-[15%] bg-[#F1F2F7]">
@@ -30,6 +54,15 @@ export default function Sidebar() {
           <MdAnalytics size={32} />
           <h2 className="font-bold">Dashboard</h2>
         </NavLink>
+
+        {userRole == "student" && (
+          <NavLink to="/subjects" className={linkClasses}>
+            <MdAnalytics size={32} />
+            <h2 className="font-bold">StudentArea</h2>
+          </NavLink>
+        )} 
+
+        
 
         <NavLink to="/aipretest" className={linkClasses}>
           <MdMenuBook size={32} />
@@ -54,9 +87,11 @@ export default function Sidebar() {
           <MdContactSupport size={32} />
           <h2 className="font-bold">Help</h2>
         </NavLink>
-        
 
-        
+        <button onClick={handleLogout} className="flex p-1 gap-2 bg-transparent">
+          <MdLogout size={32} color="#45495E" />
+          <h2 className="font-bold text-[#45495E]">Logout</h2>
+        </button>
         
       </div>
     </div>

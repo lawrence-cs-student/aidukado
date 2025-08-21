@@ -65,6 +65,7 @@ export default function AIPretest() {
             <MdDriveFolderUpload size={30} />
           </label>
           <input
+            accept=".pdf, .doc, .docx"
             id="file-upload"
             type="file"
             className="hidden"

@@ -32,10 +32,10 @@ html, body, #root {
 .side-background-signup {
   --bg-image: url("https://images.pexels.com/photos/589808/pexels-photo-589808.jpeg");
   --bg-image-opacity: .1;
-  background-color: #7F8CAA;
+  background-color: #F5C45E;
   position: relative;
   isolation: isolate;
-  width: 100%;
+  width: 45%;
   display: flex;
   flex-direction: column;
 }
