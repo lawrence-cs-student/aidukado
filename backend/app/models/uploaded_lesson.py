@@ -14,7 +14,7 @@ class UploadedLessons(Base):
     file_name = Column(Text, nullable=False,)
     class_id = Column(Integer, ForeignKey = "classes.id", nullable=False)
     
-    class_ = relationship("Classes", back_populates="lessons")
+    # class_ = relationship("Classes", back_populates="lessons")
     
     
     

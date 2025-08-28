@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
+
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -6,6 +8,7 @@ class UserCreate(BaseModel):
     role: str
     first_name: str 
     last_name: str 
+    middlename: str
     
 class UserResponse(BaseModel):
     id: int
@@ -13,6 +16,17 @@ class UserResponse(BaseModel):
     role: str
     first_name: str 
     last_name: str 
+    
+    class Config:
+        from_attributes = True
+        
+class UserOut(BaseModel):
+    id: int
+    email: EmailStr
+    role: str
+    first_name: str
+    last_name: str
+    middlename: Optional[str] = None
     
     class Config:
         from_attributes = True

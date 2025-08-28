@@ -10,6 +10,9 @@ import Signup from "./components/Signup";
 import StudentArea from './pages/StudentArea';
 import SelectedSubject from './pages/SelectedSubject';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
+import AdminDashboard from './pages/AdminDashboard';
+import UserManagement from './pages/UserManagement';
+import Settings from './pages/Settings';
 
 function AppContent() {
   const location = useLocation();
@@ -57,6 +60,9 @@ function AppContent() {
               </RoleProtectedRoute>
             } 
           />
+          <Route path='/userManagement' element={<UserManagement/>}/>
+          <Route path="/admin" element={<AdminDashboard />}/>
+          <Route path='/settings' element={<Settings/>}/>
           <Route path="*" element={<h1>404 - Page Not Found</h1>} />
         </Routes>
       </main>

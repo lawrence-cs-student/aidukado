@@ -9,21 +9,25 @@ import {
 
 } from "react-icons/md";
 import { NavLink, useNavigate } from "react-router-dom";
-import useUserRoleStore from "../store/storeUserRole";
+// import useUserRoleStore from "../store/storeUserRole";
 import axios from "axios";
 
 
 export default function Sidebar() {
+
+
+  const userRole = "admin";
   const navigate = useNavigate();
-  const userRole = useUserRoleStore((state) => (state.userRole))
-  const clearUserRole = useUserRoleStore((state => (state.clearUserRole)))
+  // RBAC dont clear
+  // const userRole = useUserRoleStore((state) => (state.userRole))
+  // const clearUserRole = useUserRoleStore((state => (state.clearUserRole)))
   const linkClasses = ({ isActive }) =>
     `flex items-center space-x-2 px-2 py-1 rounded ${
-      isActive ? "bg-[#45495E] text-white" : "text-[#45495E]"
+      isActive ? "bg-[#102E50] text-white" : "text-[#102E50]"
     }`;
 
   const handleLogout = async () => {
-    clearUserRole();
+    // clearUserRole();
     try {
       const response = await axios.post("http://localhost:8000/logout",
       {},
@@ -41,19 +45,46 @@ export default function Sidebar() {
   return (
     <div className="h-full w-[15%] min-w-[15%] bg-[#F1F2F7]">
       <div className="flex space-x-3 p-[15%]">
-        <div className="rounded-full h-[30px] w-[30px] bg-[#45495E] flex justify-center items-center font-bold text-white">
+        <div className="rounded-full h-[30px] w-[30px] bg-[#102E50] flex justify-center items-center font-bold text-white">
           A
         </div>
-        <h1 className="text-[#45495E] font-bold text-2xl">AIDUKADO</h1>
+        <h1 className="text-[#102E50] font-bold text-2xl">AIDUKADO</h1>
       </div>
 
       <div className="flex flex-col space-y-4 mt-10 mb-15 p-[15%]">
         <h2 className="text-[#45495E] font-semibold opacity-75">Menu</h2>
 
-        <NavLink to="/dashboard" className={linkClasses}>
+        {/* For Admin */}
+
+        {userRole == "admin" && (
+          <NavLink to="/admin" className={linkClasses}>
+            <MdAnalytics size={32} />
+            <h2 className="font-bold">Dashboard(A)</h2>
+          </NavLink>
+        )}
+
+        {userRole == "admin" && (
+          <NavLink to="/userManagement" className={linkClasses}>
+            <MdAnalytics size={32} />
+            <h2 className="font-bold">User Management</h2>
+          </NavLink>
+        )}
+
+        {userRole == "admin" && (
+          <NavLink to="/settings" className={linkClasses}>
+            <MdAnalytics size={32} />
+            <h2 className="font-bold">Settings</h2>
+          </NavLink>
+        )}
+
+
+
+        {/* <NavLink to="/dashboard" className={linkClasses}>
           <MdAnalytics size={32} />
           <h2 className="font-bold">Dashboard</h2>
-        </NavLink>
+        </NavLink> */}
+
+        
 
         {userRole == "student" && (
           <NavLink to="/subjects" className={linkClasses}>
@@ -64,15 +95,17 @@ export default function Sidebar() {
 
         
 
-        <NavLink to="/aipretest" className={linkClasses}>
+        {/* <NavLink to="/aipretest" className={linkClasses}>
           <MdMenuBook size={32} />
           <h2 className="font-bold">AI Test & Learn</h2>
-        </NavLink>
+        </NavLink> */}
 
-        <NavLink to="/performance" className={linkClasses}>
-          <MdBarChart size={32} />
-          <h2 className="font-bold">My Performance</h2>
-        </NavLink>
+        {userRole == "student" && (
+          <NavLink to="/performance" className={linkClasses}>
+            <MdBarChart size={32} />
+            <h2 className="font-bold">My Performance</h2>
+          </NavLink>
+        )}
       </div>
 
       <div className="flex flex-col space-y-4 p-[15%]">

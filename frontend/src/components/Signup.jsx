@@ -1,19 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
-import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { MdClose } from "react-icons/md";
 
 
-export default function Signup() {
-
-  const navigate = useNavigate();
+export default function Signup({ onSuccess, onClose }) {
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     role: "",
     first_name: "",
-    last_name: ""
+    last_name: "",
+    middlename: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -53,6 +51,7 @@ export default function Signup() {
       currentErrors.last_name = "Last Name is required";
     }
 
+
     return currentErrors;
   }
 
@@ -68,7 +67,7 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/auth/signup", formData, 
+      const res = await axios.post("http://localhost:8000/user/create", formData, 
         {headers: {'Content-Type' : 'application/json'}
       });
 
@@ -79,9 +78,10 @@ export default function Signup() {
         password: "",
         role: "",
         first_name: "",
-        last_name: ""
+        last_name: "",
+        middlename: ""
       })
-      navigate("/login");
+      if (onSuccess) onSuccess();
 
     }catch (err) {
       if (err.response?.data?.detail) {
@@ -97,81 +97,84 @@ export default function Signup() {
 
   
 
-  const inputClass = "w-4/5 h-[10%] border-solid border-2 border-[#C9CCD5] bg-transparent rounded-lg text-[#10375C] p-[1%]"
+  const inputClass = "w-full h-[8%] border-solid border border-[#C9CCD5] bg-transparent text-[#102E50] p-[1%] rounded-md shadow-md"
   const labelClass = "text-[#102E50] font-bold opacity-75"
 
   return (
-    <div className="w-full h-screen flex flex-row ">
-      <div className="w-[55%] h-full bg-white flex flex-col justify-center items-center" >
+    <div className="w-full h-full flex flex-col justify-center items-center bg-white p-[4%] shadow-xl">
+      {errors.api && <p className="text-red-800">{errors.api}</p>}
+      {success && <p className="text-green-800">{success}</p>}
+      <MdClose size={24} color="#102E50"  className="self-end" onClick={onClose}/>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col w-full h-full gap-[2%] text-left rounded-2xl"
+      >
         
-        {errors.api && <p className="text-red-800">{errors.api}</p>}
-        {success && <p className="text-green-800">{success}</p>}
 
-        
-        <form onSubmit={handleSubmit}
-              className="flex flex-col w-3/5 h-1/2 gap-[2%] "
+        <label className={labelClass}>First Name:</label>
+        <input
+          type="text"
+          name="first_name"
+          value={formData.first_name}
+          onChange={handleChange}
+          className={inputClass}
+        />
+
+        <label className={labelClass}>Last Name:</label>
+        <input
+          type="text"
+          name="last_name"
+          value={formData.last_name}
+          onChange={handleChange}
+          className={inputClass}
+        />
+
+
+        <label className={labelClass}>Middle Name:</label>
+        <input
+          type="text"
+          name="middlename"
+          value={formData.middlename}
+          onChange={handleChange}
+          className={inputClass}
+        />
+
+        <label className={labelClass}>Email:</label>
+        <input
+          type="text"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          className={inputClass}
+        />
+
+        <label className={labelClass}>Password:</label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          className={inputClass}
+        />
+
+        <label className={labelClass}>Role</label>
+        <select value={formData.role} name="role" onChange={handleChange} className={inputClass}>
+          <option value="" className="text-red-500">Select a role</option>
+          <option value="student" className="text-black">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+
+        <button
+          type="submit"
+          className="w-full mt-[1%] bg-[#10375C] text-white transition-transform duration-200 hover:scale-95 shadow-md"
         >
-          <h2 className="text-[#102E50] text-4xl font-bold mb-[2%]">Sign Up</h2>
-
-          <label className={labelClass}>First Name:</label>
-          <input
-            type="text"
-            name="first_name"
-            value={formData.first_name}
-            onChange={handleChange}
-            className={inputClass}
-          />
-
-          <label className={labelClass}>Last Name:</label>
-          <input 
-            type="text"
-            name="last_name"
-            value={formData.last_name}
-            onChange={handleChange}
-            className={inputClass}
-          />
-
-          <label className={labelClass}>Email:</label>
-          <input 
-            type="text"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className={inputClass}
-          />
-
-          <label className={labelClass}>Password:</label>
-          <input 
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className={inputClass}
-          />
-
-          <label className={labelClass}>Role</label>
-          <select name="role" onChange={handleChange} className={inputClass}>
-            <option value="">Select a role</option>
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-          </select>
-          <button type="submit" className="w-4/5 mt-[1%] bg-[#10375C] text-white transition-transform duration-200 hover:scale-95">
-            {loading ? "signing up..." : "signup"}
-          </button>
-        </form>
-      </div>
-
-      <div className="w-[45%] h-full flex justify-center items-center bg-black side-background-signup">
-          <h1 className="text-white opacity-[0.9] text-4xl">
-              Already Have an Account?
-          </h1>
-          <NavLink className="w-1/5 h-[5%]" to={"/login"}>
-              <button className="w-full h-full mt-[6%] p-1 bg-[#102E50] text-white transition-transform duration-200 hover:scale-95">Login</button>
-          </NavLink>
-      </div>
-
-      
+          {loading ? "SUBMITTING..." : "SUBMIT"}
+        </button>
+        
+      </form>
     </div>
-  )
+
+
+  );
 
 }

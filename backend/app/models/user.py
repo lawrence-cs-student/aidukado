@@ -11,6 +11,7 @@ class User(Base):
     role = Column(String(20), nullable=False)
     first_name = Column(String(100))
     last_name = Column(String(100))
+    middlename = Column(String(100))
     created_at = Column(TIMESTAMP, server_default=func.now())
     
     
