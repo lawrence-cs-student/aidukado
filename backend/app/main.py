@@ -5,6 +5,8 @@ from .routers import post_test
 from .routers import auth
 from .routers import logout
 from .routers import user
+#added router classes
+from .routers import classes
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -23,4 +25,5 @@ app.include_router(teacher_router)
 app.include_router(lesson.router)
 app.include_router(post_test.router)
 app.include_router(logout.router)
+app.include_router(classes.router)
 
