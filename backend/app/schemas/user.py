@@ -9,7 +9,7 @@ class UserCreate(BaseModel):
     first_name: str 
     last_name: str 
     middlename: str
-    
+
 class UserResponse(BaseModel):
     id: int
     email: EmailStr
@@ -31,6 +31,13 @@ class UserOut(BaseModel):
     class Config:
         from_attributes = True
         
+class UserUpdate(BaseModel):
+    email: str | None = None
+    role: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    middlename: str | None = None
+        
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
@@ -38,6 +45,9 @@ class UserLogin(BaseModel):
 class TokenResponse(BaseModel):
     access_token : str
     token_type: str = "bearer"
+    
+    
+
 
 
 

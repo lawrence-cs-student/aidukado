@@ -5,8 +5,8 @@ export default function DeleteUser({ userId, onClose, onSuccess}) {
 
     const handleSubmit = async () => {
         try {
-            await axios.delete(`http://localhost:8000/user/delete${userId}`, )
-            onSuccess();
+            await axios.delete(`http://localhost:8000/user/delete/${userId}`, )
+            if(onSuccess) onSuccess();
         } catch (err) {
             console.error("Error Deleting User", err)
         }

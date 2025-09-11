@@ -3,7 +3,7 @@ import axios from "axios";
 import { MdClose } from "react-icons/md";
 
 
-export default function Signup({ onSuccess, onClose }) {
+export default function AddUser({ onSuccess, onClose }) {
 
   const [formData, setFormData] = useState({
     email: "",
@@ -106,11 +106,11 @@ export default function Signup({ onSuccess, onClose }) {
       {success && <p className="text-green-800">{success}</p>}
       <MdClose size={24} color="#102E50"  className="self-end" onClick={onClose}/>
       <form
+        method="post"
         onSubmit={handleSubmit}
         className="flex flex-col w-full h-full gap-[2%] text-left rounded-2xl"
       >
         
-
         <label className={labelClass}>First Name:</label>
         <input
           type="text"

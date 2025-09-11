@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from app.models.user import User
-from app.schemas.user import UserCreate, UserOut
+from app.schemas.user import UserCreate, UserOut, UserUpdate
 from app.database import SessionLocal
 from app.utils.auth import hash_password
 
@@ -30,19 +30,19 @@ def get_users(query: str | None = None, db: Session = Depends(get_db)):
             )
         )
         
-    users= users_query.all()
+    users= users_query.order_by(User.id.asc()).all()
 
     return users
 
 
-# @router.get("/getById", response_model=UserOut)
-# def get_user_by_id(user_id: int , db: Session = Depends(get_db)):
-#     user = db.query(User).filter(User.id == user_id).first()
+@router.get("/getById/{user_id}", response_model=UserOut)
+def get_user_by_id(user_id: int , db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
     
-#     if not user:
-#         return HTTPException(status_code=404, detail="user not found")
+    if not user:
+        raise HTTPException(status_code=404, detail="user not found")
         
-#     return user
+    return user
 
 @router.post("/create")
 def create_user(user:UserCreate, db: Session = Depends(get_db)):
@@ -59,19 +59,33 @@ def create_user(user:UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    print(user)
+    
     
     return{"message": "User Created Successfully"}
 
+@router.patch("/patch/{user_id}")
+def patch_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not existing")
+    
+    for key, value in user_update.dict(exclude_unset=True).items():
+        setattr(user, key, value)
+        
+    db.commit()
+    db.refresh(user)
+
+    return {"message" : f"user with {user_id} updated successfully"}
 
 @router.delete("/delete/{user_id}")
 def delete_user(user_id : int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     
-    
     if not user:
-        return {"message" : "User not existing"}
+        raise HTTPException(status_code=404, detail="user not found")
     
-    db.delete(User)
-    db.commit
+    db.delete(user)
+    db.commit()
     return {"message" : f"user with {user_id} deleted successfully"}
+

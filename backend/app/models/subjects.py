@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 
-class Subjects(Base):
+class Subject(Base):
     
     __tablename__ = "subjects"
     
@@ -12,3 +12,6 @@ class Subjects(Base):
     name = Column(String, nullable=False)
     description = Column(Text, nullable=False)
     created_at = Column(TIMESTAMP, server_default=func.now())
+    
+    
+    

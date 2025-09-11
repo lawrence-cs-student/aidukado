@@ -71,6 +71,20 @@ export default function Sidebar() {
         )}
 
         {userRole == "admin" && (
+          <NavLink to="/classManagement" className={linkClasses}>
+            <MdAnalytics size={32} />
+            <h2 className="font-bold">Class Management</h2>
+          </NavLink>
+        )}
+
+        {userRole == "admin" && (
+          <NavLink to="/subjectManagement" className={linkClasses}>
+            <MdAnalytics size={32} />
+            <h2 className="font-bold">Subject Management</h2>
+          </NavLink>
+        )}
+
+        {userRole == "admin" && (
           <NavLink to="/settings" className={linkClasses}>
             <MdAnalytics size={32} />
             <h2 className="font-bold">Settings</h2>
