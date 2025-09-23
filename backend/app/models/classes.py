@@ -14,5 +14,5 @@ class Classes(Base):
     
     # subject_of_class = relationship("Subjects", back_populates= "")
     # lessons = relationship("UploadedLessons", back_populates="classes_")
-    # user_teacher = relationship("Users", back_populates="classes_")
-    # class_students = relationship("ClassStudents", back_populates="classes_")
+    user_teacher = relationship("Users", back_populates="classes_")
+    class_students = relationship("ClassEnrollment", back_populates="enrolled_class")

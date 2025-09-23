@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from app.models.user import User
+from app.models.user import Users
 from app.schemas.user import UserCreate, UserOut, UserUpdate
 from app.database import SessionLocal
 from app.utils.auth import hash_password
@@ -19,39 +19,52 @@ def get_db():
 @router.get("/get", response_model=list[UserOut])
 def get_users(query: str | None = None, db: Session = Depends(get_db)):
     
-    users_query = db.query(User)
+    users_query = db.query(Users)
     
     if query:
         users_query = users_query.filter(
             or_(
-                User.first_name.ilike(f"%{query}%"),
-                User.last_name.ilike(f"%{query}%"),
-                User.email.ilike(f"%{query}%")
+                Users.first_name.ilike(f"%{query}%"),
+                Users.last_name.ilike(f"%{query}%"),
+                Users.email.ilike(f"%{query}%")
             )
         )
         
-    users= users_query.order_by(User.id.asc()).all()
+    users= users_query.order_by(Users.id.asc()).all()
 
     return users
 
 
 @router.get("/getById/{user_id}", response_model=UserOut)
 def get_user_by_id(user_id: int , db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(Users).filter(Users.id == user_id).first()
     
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
         
     return user
 
+@router.get("/get_teachers", response_model=list[UserOut])
+def get_all_teachers(db: Session = Depends(get_db)):
+    teachers = db.query(Users).filter(Users.role == "teacher").all()
+    
+    return teachers
+
+@router.get("/get_students", response_model=list[UserOut])
+def get_all_students(db: Session = Depends(get_db)):
+    students = db.query(Users).filter(Users.role == "student").all()
+    
+    return students
+
+
 @router.post("/create")
 def create_user(user:UserCreate, db: Session = Depends(get_db)):
     password = hash_password(user.password)
 
-    new_user = User(
+    new_user = Users(
         last_name = user.last_name,
         first_name = user.first_name,
-        middlename = user.middlename,
+        middle_name = user.middle_name,
         email = user.email,
         password_hash = password,
         role = user.role
@@ -65,7 +78,7 @@ def create_user(user:UserCreate, db: Session = Depends(get_db)):
 
 @router.patch("/patch/{user_id}")
 def patch_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(Users).filter(Users.id == user_id).first()
     
     if not user:
         raise HTTPException(status_code=404, detail="User not existing")
@@ -80,7 +93,7 @@ def patch_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_
 
 @router.delete("/delete/{user_id}")
 def delete_user(user_id : int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(Users).filter(Users.id == user_id).first()
     
     if not user:
         raise HTTPException(status_code=404, detail="user not found")

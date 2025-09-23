@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Sidebar from "./components/sidebar";
+import Sidebar from './components/sidebar';
 import AIPretest from "./pages/AIPretest";
 import Dashboard from "./pages/Dashboard";
 import Lesson from './pages/Lesson';
@@ -11,11 +11,13 @@ import StudentArea from './pages/StudentArea';
 import SelectedSubject from './pages/SelectedSubject';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
 import AdminDashboard from './pages/AdminDashboard';
-import UserManagement from './pages/UserManagement';
-import ClassManagement from './pages/ClassManagement';
-import SubjectManagement from './pages/SubjectManagement';
-import EnrollmentManagement from './pages/EnrollmentManagement';
+import UserManagement from './pages/AdminPages/UserManagement';
+import ClassManagement from './pages/AdminPages/ClassManagement';
+import SubjectManagement from './pages/AdminPages/SubjectManagement';
+import EnrollmentManagement from './pages/AdminPages/EnrollmentManagement';
+import AboutPage from './pages/About';
 import Settings from './pages/Settings';
+import StudentClasses from './pages/StudentClasses';
 
 function AppContent() {
   const location = useLocation();
@@ -63,12 +65,15 @@ function AppContent() {
               </RoleProtectedRoute>
             } 
           />
+
+          <Route path='classes' element={<StudentClasses />}/>
           <Route path='/userManagement' element={<UserManagement/>}/>
           <Route path='/classManagement' element={<ClassManagement/>}/>
           <Route path='/subjectManagement' element={<SubjectManagement/>} />
           <Route path="/enrollmentManagement" element={<EnrollmentManagement />} />
           <Route path="/admin" element={<AdminDashboard />}/>
           <Route path='/settings' element={<Settings/>}/>
+          <Route path='/help' element={<AboutPage/>}/>
           <Route path="*" element={<h1>404 - Page Not Found</h1>} />
         </Routes>
       </main>

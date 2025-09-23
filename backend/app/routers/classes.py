@@ -28,7 +28,7 @@ def get_classes(query: str | None = None, db: Session = Depends(get_db)):
 
     return classes
 
-@router.get("/getById", response_model=ClassOut)
+@router.get("/getById/{class_id}", response_model=ClassOut)
 def get_user_by_id(class_id: int , db: Session = Depends(get_db)):
     new_class = db.query(Classes).filter(Classes.id == class_id).first()
     
@@ -53,21 +53,21 @@ def create_class(class_data:ClassCreate, db: Session = Depends(get_db)):
     
     return{"message": "Class Created Successfully"}
 
-@router.put("/update/{class_id}")
-def update_class(class_id:int, class_data:ClassCreate, db: Session = Depends(get_db)):
-    class_ = db.query(Classes).filter(Classes.id == class_id).first()
+# @router.put("/update/{class_id}")
+# def update_class(class_id:int, class_data:ClassCreate, db: Session = Depends(get_db)):
+#     class_ = db.query(Classes).filter(Classes.id == class_id).first()
 
-    if not class_:
-        return {"message": "Class not found"}
+#     if not class_:
+#         return {"message": "Class not found"}
 
-    class_.name = class_data.name
-    class_.subject_id = class_data.subject_id
-    class_.teacher_id = class_data.teacher_id
+#     class_.name = class_data.name
+#     class_.subject_id = class_data.subject_id
+#     class_.teacher_id = class_data.teacher_id
     
-    db.commit()
-    db.refresh(class_)
+#     db.commit()
+#     db.refresh(class_)
     
-    return {"message": "Class updated successfully"}
+#     return {"message": "Class updated successfully"}
 
 
 @router.patch("/patch/{class_id}")
@@ -91,8 +91,9 @@ def delete_class(class_id : int, db: Session = Depends(get_db)):
     
     
     if not classes:
-        return {"message" : "User not existing"}
+        raise HTTPException(status_code=404, detail="Class not Existing")
     
     db.delete(classes)
     db.commit()
     return {"message" : f"user with {class_id} deleted successfully"}
+

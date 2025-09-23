@@ -74,7 +74,7 @@ export default function AddSubject({ onSuccess, onClose}) {
 
 
     const labelClass = "text-[#102E50] font-bold opacity-75"
-
+    
     return (
         <div className="w-full h-full flex flex-col justify-center items-center bg-white p-[4%] shadow-2xl rounded-lg">
             {errors.api && <p className="text-red-800">{errors.api}</p>}

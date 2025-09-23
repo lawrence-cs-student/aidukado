@@ -1,7 +1,7 @@
 
 
 
-export default function SearchForm({query, setQuery}) {
+export default function SearchForm({query, setQuery, inputPlaceholder}) {
     return (
         <form className="w-2/5 h-full">
             <label htmlFor="searchbar" className="mb-2 text-sm font-medium text-gray-900 sr-only">
@@ -28,7 +28,7 @@ export default function SearchForm({query, setQuery}) {
                     name="searchbar"
                     type="search"
                     className="block w-full h-full pl-10 text-md text-gray-900 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-md"
-                    placeholder="Search..."
+                    placeholder={inputPlaceholder}
                     required
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}

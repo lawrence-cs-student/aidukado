@@ -2,34 +2,31 @@ import { useState } from "react";
 import axios from "axios";
 import { MdClose } from "react-icons/md";
 
-
 export default function AddUser({ onSuccess, onClose }) {
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     role: "",
-    first_name: "",
-    last_name: "",
-    middlename: ""
+    firstName: "",
+    lastName: "",
+    middleName: ""
   });
 
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value}));
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const validate = () => {
     const currentErrors = {};
 
     if (!formData.email) {
       currentErrors.email = "Email is required";
-    }else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       currentErrors.email = "Email is invalid";
     }
 
@@ -43,23 +40,22 @@ export default function AddUser({ onSuccess, onClose }) {
       currentErrors.role = "Role is required";
     }
 
-    if (!formData.first_name) {
-      currentErrors.first_name = "First Name is required";
+    if (!formData.firstName) {
+      currentErrors.firstName = "First Name is required";
     }
 
-    if (!formData.last_name) {
-      currentErrors.last_name = "Last Name is required";
+    if (!formData.lastName) {
+      currentErrors.lastName = "Last Name is required";
     }
-
 
     return currentErrors;
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
 
-    if(Object.keys(validationErrors).length > 0) {
+    if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
@@ -67,55 +63,60 @@ export default function AddUser({ onSuccess, onClose }) {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/user/create", formData, 
-        {headers: {'Content-Type' : 'application/json'}
+
+      
+
+      const res = await axios.post("http://localhost:8000/user/create", formData, {
+        headers: { "Content-Type": "application/json" }
       });
 
-      setSuccess(`User Created: ${res.data.email}`)
+      setSuccess(`User Created: ${res.data.email}`);
 
       setFormData({
         email: "",
         password: "",
         role: "",
-        first_name: "",
-        last_name: "",
-        middlename: ""
-      })
-      if (onSuccess) onSuccess();
+        firstName: "",
+        lastName: "",
+        middleName: ""
+      });
 
-    }catch (err) {
+      if (onSuccess) onSuccess();
+    } catch (err) {
       if (err.response?.data?.detail) {
-          setErrors({api : err.response.data.detail})
+        setErrors({ api: err.response.data.detail });
       } else {
-          setErrors({api : "Network Error"});
+        setErrors({ api: "Network Error" });
       }
-    }finally {
+    } finally {
       setLoading(false);
     }
+  };
 
-  }
-
-  
-
-  const inputClass = "w-full h-[8%] border-solid border border-[#C9CCD5] bg-transparent text-[#102E50] p-[1%] rounded-md shadow-md"
-  const labelClass = "text-[#102E50] font-bold opacity-75"
+  const inputClass =
+    "w-full h-[8%] border-solid border border-[#C9CCD5] bg-transparent text-[#102E50] p-[1%] rounded-md shadow-md";
+  const labelClass = "text-[#102E50] font-bold opacity-75";
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center bg-white p-[4%] shadow-xl">
       {errors.api && <p className="text-red-800">{errors.api}</p>}
       {success && <p className="text-green-800">{success}</p>}
-      <MdClose size={24} color="#102E50"  className="self-end" onClick={onClose}/>
+      <MdClose
+        size={24}
+        color="#102E50"
+        className="self-end"
+        onClick={onClose}
+      />
       <form
         method="post"
         onSubmit={handleSubmit}
         className="flex flex-col w-full h-full gap-[2%] text-left rounded-2xl"
       >
-        
         <label className={labelClass}>First Name:</label>
         <input
           type="text"
-          name="first_name"
-          value={formData.first_name}
+          name="firstName"
+          value={formData.firstName}
           onChange={handleChange}
           className={inputClass}
         />
@@ -123,18 +124,17 @@ export default function AddUser({ onSuccess, onClose }) {
         <label className={labelClass}>Last Name:</label>
         <input
           type="text"
-          name="last_name"
-          value={formData.last_name}
+          name="lastName"
+          value={formData.lastName}
           onChange={handleChange}
           className={inputClass}
         />
 
-
         <label className={labelClass}>Middle Name:</label>
         <input
           type="text"
-          name="middlename"
-          value={formData.middlename}
+          name="middleName"
+          value={formData.middleName}
           onChange={handleChange}
           className={inputClass}
         />
@@ -158,9 +158,14 @@ export default function AddUser({ onSuccess, onClose }) {
         />
 
         <label className={labelClass}>Role</label>
-        <select value={formData.role} name="role" onChange={handleChange} className={inputClass}>
-          <option value="" className="text-red-500">Select a role</option>
-          <option value="student" className="text-black">Student</option>
+        <select
+          value={formData.role}
+          name="role"
+          onChange={handleChange}
+          className={inputClass}
+        >
+          <option value="">Select a role</option>
+          <option value="student">Student</option>
           <option value="teacher">Teacher</option>
         </select>
 
@@ -170,11 +175,7 @@ export default function AddUser({ onSuccess, onClose }) {
         >
           {loading ? "SUBMITTING..." : "SUBMIT"}
         </button>
-        
       </form>
     </div>
-
-
   );
-
 }

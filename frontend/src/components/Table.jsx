@@ -1,6 +1,6 @@
 import { MdDelete, MdEdit } from "react-icons/md";
 
-export default function Table({ columns, data, setSelectedUserId, setIsOpenEditModal, setIsOpenDeleteModal }) {
+export default function Table({ columns, data, setSelectedData, setIsOpenEditModal, setIsOpenDeleteModal }) {
 
     const columnStyle = "px-4 py-2 text-left";
     const tableDataStyle = "text-[#10375C] px-4 py-2 text-left"
@@ -32,14 +32,14 @@ export default function Table({ columns, data, setSelectedUserId, setIsOpenEditM
                                 <div className="w-full h-full flex">
                                     <MdEdit size={24} color="#F5C45E"
                                         onClick={ () => {
-                                            setSelectedUserId(row.id);
+                                            setSelectedData(row);
                                             setIsOpenEditModal(true);
                                         }}
                             
                                     />
                                     <MdDelete size={24} color="red" 
                                         onClick={ () => {
-                                            setSelectedUserId(row.id);
+                                            setSelectedData(row);
                                             setIsOpenDeleteModal(true);
                                             }
                                         }

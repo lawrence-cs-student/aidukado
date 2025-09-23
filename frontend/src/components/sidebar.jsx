@@ -5,7 +5,9 @@ import {
   MdBarChart,
   MdAccountCircle,
   MdContactSupport,
-  MdLogout,
+  MdExitToApp,
+  MdAssignmentInd,
+  MdClass,
 
 } from "react-icons/md";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -14,7 +16,6 @@ import axios from "axios";
 
 
 export default function Sidebar() {
-
 
   const userRole = "admin";
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function Sidebar() {
   }
 
   return (
-    <div className="h-full w-[15%] min-w-[15%] bg-[#F1F2F7]">
+    <div className="hidden md:block h-full w-[15%] min-w-[15%] bg-[#F1F2F7]">
       <div className="flex space-x-3 p-[15%]">
         <div className="rounded-full h-[30px] w-[30px] bg-[#102E50] flex justify-center items-center font-bold text-white">
           A
@@ -65,31 +66,34 @@ export default function Sidebar() {
 
         {userRole == "admin" && (
           <NavLink to="/userManagement" className={linkClasses}>
-            <MdAnalytics size={32} />
+            <MdAccountCircle size={32} />
             <h2 className="font-bold">User Management</h2>
           </NavLink>
         )}
 
         {userRole == "admin" && (
+          <NavLink to="/enrollmentManagement" className={linkClasses}>
+            <MdAssignmentInd size={32} />
+            <h2 className="font-bold">Enrollment Management</h2>
+          </NavLink>
+        )}
+
+        {userRole == "admin" && (
           <NavLink to="/classManagement" className={linkClasses}>
-            <MdAnalytics size={32} />
+            <MdClass size={32} />
             <h2 className="font-bold">Class Management</h2>
           </NavLink>
         )}
 
         {userRole == "admin" && (
           <NavLink to="/subjectManagement" className={linkClasses}>
-            <MdAnalytics size={32} />
+            <MdMenuBook size={32} />
             <h2 className="font-bold">Subject Management</h2>
           </NavLink>
         )}
 
-        {userRole == "admin" && (
-          <NavLink to="/settings" className={linkClasses}>
-            <MdAnalytics size={32} />
-            <h2 className="font-bold">Settings</h2>
-          </NavLink>
-        )}
+        
+
 
 
 
@@ -114,10 +118,10 @@ export default function Sidebar() {
           <h2 className="font-bold">AI Test & Learn</h2>
         </NavLink> */}
 
-        {userRole == "student" && (
-          <NavLink to="/performance" className={linkClasses}>
+        {userRole == "admin" && (
+          <NavLink to="/classes" className={linkClasses}>
             <MdBarChart size={32} />
-            <h2 className="font-bold">My Performance</h2>
+            <h2 className="font-bold">My Classes</h2>
           </NavLink>
         )}
       </div>
@@ -125,10 +129,6 @@ export default function Sidebar() {
       <div className="flex flex-col space-y-4 p-[15%]">
         <h2 className="text-[#45495E] font-semibold opacity-75">Others</h2>
 
-        <NavLink to="/accounts" className={linkClasses}>
-          <MdAccountCircle size={32} />
-          <h2 className="font-bold">Accounts</h2>
-        </NavLink>
 
         <NavLink to="/help" className={linkClasses}>
           <MdContactSupport size={32} />
@@ -136,8 +136,8 @@ export default function Sidebar() {
         </NavLink>
 
         <button onClick={handleLogout} className="flex p-1 gap-2 bg-transparent">
-          <MdLogout size={32} color="#45495E" />
-          <h2 className="font-bold text-[#45495E]">Logout</h2>
+          <MdExitToApp size={32} color="#102E50"/>
+          <h2 className="font-bold text-[#102E50]">Logout</h2>
         </button>
         
       </div>

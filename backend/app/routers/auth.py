@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 from datetime import timedelta
 from sqlalchemy.orm import Session
-from app.models.user import User
+from app.models.user import Users
 from app.schemas.user import UserCreate, UserResponse, UserLogin, TokenResponse
 from app.database import get_db
 from app.utils.auth import hash_password, verify_password
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/signup", response_model=UserResponse)
 def signup(user: UserCreate, db: Session = Depends(get_db)):
     
-    existing_user = db.query(User).filter(User.email == user.email).first()
+    existing_user = db.query(Users).filter(Users.email == user.email).first()
     
     if existing_user:
         raise HTTPException(
@@ -24,7 +24,7 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
         
     hashed_pw = hash_password(user.password)
     
-    db_user = User (
+    db_user = Users (
         email=user.email,
         password_hash=hashed_pw,
         role=user.role,
@@ -42,7 +42,7 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login")
 def login(user: UserLogin, response : Response ,db: Session = Depends(get_db)):
     
-    db_user = db.query(User).filter(User.email == user.email).first()
+    db_user = db.query(Users).filter(Users.email == user.email).first()
     
     if not db_user or not verify_password(user.password, db_user.password_hash):
         raise HTTPException(
