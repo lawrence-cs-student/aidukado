@@ -1,9 +1,11 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 
-export default function ClassCard({ subjectName, teacher}) {
+export default function ClassCard({ subjectName, teacher, to}) {
   return (
-    <div 
+    <Link
+      to={to} 
       className="
         flex flex-col
         w-3/4 sm:w-[20%] 
@@ -25,6 +27,6 @@ export default function ClassCard({ subjectName, teacher}) {
             <p className="text-yellow-400 truncate">{`${teacher.firstName} ${teacher.lastName}`}</p>
           </div>
         </div>
-    </div>
+    </Link>
   );
 }

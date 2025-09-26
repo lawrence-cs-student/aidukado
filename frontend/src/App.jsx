@@ -18,6 +18,9 @@ import EnrollmentManagement from './pages/AdminPages/EnrollmentManagement';
 import AboutPage from './pages/About';
 import Settings from './pages/Settings';
 import StudentClasses from './pages/StudentClasses';
+import ClassSubject from './components/classSubject';
+import Lessons from './components/lessons';
+import TeachersClass from './components/teachersClass';
 
 function AppContent() {
   const location = useLocation();
@@ -28,7 +31,7 @@ function AppContent() {
       {!hideSidebar && <Sidebar />}
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route 
             path="/dashboard" 
             element={
@@ -70,6 +73,9 @@ function AppContent() {
           <Route path='/userManagement' element={<UserManagement/>}/>
           <Route path='/classManagement' element={<ClassManagement/>}/>
           <Route path='/subjectManagement' element={<SubjectManagement/>} />
+          <Route path='/classSubject' element={<ClassSubject/>} />
+          <Route path='/lessons' element={<Lessons/>} />
+          <Route path='/teachersClass' element={<TeachersClass/>} />
           <Route path="/enrollmentManagement" element={<EnrollmentManagement />} />
           <Route path="/admin" element={<AdminDashboard />}/>
           <Route path='/settings' element={<Settings/>}/>

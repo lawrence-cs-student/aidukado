@@ -73,7 +73,8 @@ export default function StudentClasses() {
                   <ClassCard
                     key={cls.id}
                     subjectName={cls.enrolledClass.name} 
-                    teacher={cls.enrolledClass.user_teacher} 
+                    teacher={cls.enrolledClass.user_teacher}
+                    to="/classSubject" 
                   />
               ))}
             </div>

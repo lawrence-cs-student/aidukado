@@ -3,7 +3,8 @@ import useUserRoleStore from "../store/storeUserRole"
 
 
 const RoleProtectedRoute = ({ allowed_roles, children }) => {
-    const userRole = useUserRoleStore((state) => state.userRole)
+    //const userRole = useUserRoleStore((state) => state.userRole)
+    const userRole = "student";
 
     if (!userRole) {
         return <Navigate to="/login" replace />
