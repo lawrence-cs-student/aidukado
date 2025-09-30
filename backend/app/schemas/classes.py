@@ -41,4 +41,10 @@ class ClassWithTeacherOut(BaseModel):
     id: int
     name: str
     user_teacher: TeacherOut
+    
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=to_camel,
+        populate_by_name=True
+    )
         

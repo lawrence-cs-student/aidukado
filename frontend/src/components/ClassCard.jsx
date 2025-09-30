@@ -1,19 +1,28 @@
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function ClassCard({ subjectName, teacher}) {
+export default function ClassCard({ subjectName, teacher, classId}) {
+  const navigate = useNavigate();
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    navigate(`/selectedClass/${classId}`);
+  }
+
   return (
     <div 
       className="
         flex flex-col
         w-3/4 sm:w-[20%] 
-        sm:min-h-[250px] 
+        sm:min-h-[120px] 
         rounded-2xl p-1
         hover:shadow-lg hover:scale-105 transition-transform duration-300
         bg-gray-200 truncate
       "
+      onClick={handleClick}
     >
-        <div className="flex flex-col w-full h-[50%] rounded-2xl p-2 bg-[#102E50]">
+        <div className="flex flex-col w-full h-full rounded-2xl p-2 bg-[#102E50]">
           <div>
             <p className="text-xl sm:text-2xl font-bold text-white">{subjectName}</p> 
           </div>

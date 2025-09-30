@@ -1,13 +1,15 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import useUserRoleStore from "../store/storeUserRole";
+import useUserStore from "../store/useUserStore";
 
 export default function Login() {
 
     const navigate = useNavigate();
 
-    const storeUserRole = useUserRoleStore ((state) => state.storeUserRole);
+    const storeUser = useUserStore((state) => state.storeUser);
+    
+    
     const [formData, setFormData] = useState({
         email : "",
         password : ""
@@ -61,8 +63,10 @@ export default function Login() {
                 password: ""
             })
 
+            const id = response.data.id;
             const role = response.data.role;
-            storeUserRole(role);
+            
+            storeUser(id, role);
 
             navigate("/dashboard")
         } catch (err) {
@@ -82,16 +86,6 @@ export default function Login() {
             
             {success && <p className="text-green-800">{success}</p>}
             
-
-            <div className="absolute left-[68%] top-[40%]">
-                <h1 className="text-white opacity-[0.7] text-4xl">
-                    <span className="block">Sign up to unlock personalized</span>
-                    <span className="block">learning powered by AI</span>
-                </h1>
-                <NavLink to={"/signup"}>
-                    <button className="w-[100%] h-[10%] mt-[6%] p-1 bg-[#333446] text-white">Signup</button>
-                </NavLink>
-            </div>
             <div className="flex h-full w-[60%] bg-white justify-center items-center flex-col">
                 <form 
                     onSubmit={handleSubmit}

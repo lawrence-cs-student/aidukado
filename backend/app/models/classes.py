@@ -16,3 +16,5 @@ class Classes(Base):
     # lessons = relationship("UploadedLessons", back_populates="classes_")
     user_teacher = relationship("Users", back_populates="classes_")
     class_students = relationship("ClassEnrollment", back_populates="enrolled_class")
+    lessons = relationship("Lesson", back_populates="class_")
+    

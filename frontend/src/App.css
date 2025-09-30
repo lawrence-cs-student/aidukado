@@ -6,8 +6,8 @@ html, body, #root {
 }
 
 
-.side-background {
-  --bg-image: url("https://images.pexels.com/photos/248159/pexels-photo-248159.jpeg");
+.image-background {
+  --bg-image: url("https://images.pexels.com/photos/620337/pexels-photo-620337.jpeg");
   --bg-image-opacity: .05;
   background-color: #110B1D;
   position: relative;
@@ -17,7 +17,7 @@ html, body, #root {
   flex-direction: column;
 }
 
-.side-background::before {
+.image-background::before {
   content: "";
   position: absolute;
   inset: 0;

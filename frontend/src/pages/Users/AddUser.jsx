@@ -93,8 +93,7 @@ export default function AddUser({ onSuccess, onClose }) {
     }
   };
 
-  const inputClass =
-    "w-full h-[8%] border-solid border border-[#C9CCD5] bg-transparent text-[#102E50] p-[1%] rounded-md shadow-md";
+  const inputClass = "w-full h-[8%] border-solid border border-[#C9CCD5] bg-transparent text-[#102E50] p-[1%] rounded-md shadow-md";
   const labelClass = "text-[#102E50] font-bold opacity-75";
 
   return (

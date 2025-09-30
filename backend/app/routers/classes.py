@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 from app.database import SessionLocal
 from app.models.classes import Classes
-from app.schemas.classes import ClassCreate, ClassUpdate, ClassOut
+from app.schemas.classes import ClassCreate, ClassUpdate, ClassOut, ClassWithTeacherOut
 
 router = APIRouter(prefix="/classes", tags=["classes"])
 
@@ -36,6 +36,20 @@ def get_user_by_id(class_id: int , db: Session = Depends(get_db)):
         return HTTPException(status_code=404, detail="class not found")
         
     return new_class
+
+@router.get("/getByUserId/{teacher_id}", response_model=list[ClassWithTeacherOut])
+def get_classes_by_user_id(teacher_id: int, db: Session = Depends(get_db)):
+    classes = (
+        db.query(Classes)
+        .options(joinedload(Classes.user_teacher))  
+        .filter(Classes.teacher_id == teacher_id)
+        .all()
+    )
+
+    if not classes:
+        raise HTTPException(status_code=404, detail="No classes found for this teacher")
+
+    return classes
 
 
 @router.post("/create")

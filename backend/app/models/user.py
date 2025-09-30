@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP, func
 from sqlalchemy.orm import relationship
 from app.database import Base
+from app import models
+
 
 
 class Users(Base):
@@ -15,5 +17,7 @@ class Users(Base):
     created_at = Column(TIMESTAMP, server_default=func.now())
     
     
-    classes_ = relationship("Classes", back_populates="user_teacher")
+    classes_ = relationship("Classes", back_populates="user_teacher") 
     class_enrollments = relationship("ClassEnrollment", back_populates="student")
+    activity_progress = relationship("StudentActivityProgress", back_populates="student")
+    quiz_progress = relationship("StudentQuizProgress", back_populates="student")

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.schemas.subject import SubjectCreate, SubjectOut, SubjectUpdate
-from app.models.subjects import Subject
+from app.models.subject import Subject
 
 
 router = APIRouter(prefix="/subject", tags=["subject"])

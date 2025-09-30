@@ -11,24 +11,25 @@ import {
 
 } from "react-icons/md";
 import { NavLink, useNavigate } from "react-router-dom";
-// import useUserRoleStore from "../store/storeUserRole";
+import useUserStore from "../store/useUserStore";
 import axios from "axios";
 
 
 export default function Sidebar() {
 
-  const userRole = "admin";
+  const userRole = useUserStore((state) => state.userRole)
+  const clearUserRole = useUserStore((state) => state.clearUser)
   const navigate = useNavigate();
-  // RBAC dont clear
-  // const userRole = useUserRoleStore((state) => (state.userRole))
-  // const clearUserRole = useUserRoleStore((state => (state.clearUserRole)))
+
+  
+  
   const linkClasses = ({ isActive }) =>
     `flex items-center space-x-2 px-2 py-1 rounded ${
       isActive ? "bg-[#102E50] text-white" : "text-[#102E50]"
     }`;
 
   const handleLogout = async () => {
-    // clearUserRole();
+    clearUserRole();
     try {
       const response = await axios.post("http://localhost:8000/logout",
       {},
@@ -57,12 +58,17 @@ export default function Sidebar() {
 
         {/* For Admin */}
 
-        {userRole == "admin" && (
+        {/* {userRole == "admin" && (
           <NavLink to="/admin" className={linkClasses}>
             <MdAnalytics size={32} />
             <h2 className="font-bold">Dashboard(A)</h2>
           </NavLink>
-        )}
+        )} */}
+
+        <NavLink to="/dashboard" className={linkClasses}>
+          <MdAnalytics size={32} />
+          <h2 className="font-bold">Dashboard</h2>
+        </NavLink>
 
         {userRole == "admin" && (
           <NavLink to="/userManagement" className={linkClasses}>
@@ -94,32 +100,33 @@ export default function Sidebar() {
 
         
 
-
-
-
-        {/* <NavLink to="/dashboard" className={linkClasses}>
-          <MdAnalytics size={32} />
-          <h2 className="font-bold">Dashboard</h2>
-        </NavLink> */}
+        
 
         
 
-        {userRole == "student" && (
+        {/* {userRole == "student" && (
           <NavLink to="/subjects" className={linkClasses}>
             <MdAnalytics size={32} />
             <h2 className="font-bold">StudentArea</h2>
           </NavLink>
-        )} 
+        )}  */}
 
         
 
-        {/* <NavLink to="/aipretest" className={linkClasses}>
+        <NavLink to="/aipretest" className={linkClasses}>
           <MdMenuBook size={32} />
           <h2 className="font-bold">AI Test & Learn</h2>
-        </NavLink> */}
+        </NavLink>
 
-        {userRole == "admin" && (
-          <NavLink to="/classes" className={linkClasses}>
+        {userRole == "student" && (
+          <NavLink to="/studentClasses" className={linkClasses}>
+            <MdBarChart size={32} />
+            <h2 className="font-bold">My Classes</h2>
+          </NavLink>
+        )}
+
+        {userRole == "teacher" && (
+          <NavLink to="/teacherClasses" className={linkClasses}>
             <MdBarChart size={32} />
             <h2 className="font-bold">My Classes</h2>
           </NavLink>
@@ -134,6 +141,8 @@ export default function Sidebar() {
           <MdContactSupport size={32} />
           <h2 className="font-bold">Help</h2>
         </NavLink>
+
+
 
         <button onClick={handleLogout} className="flex p-1 gap-2 bg-transparent">
           <MdExitToApp size={32} color="#102E50"/>

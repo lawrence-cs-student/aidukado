@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from .routers.upload import teacher_router
+import app.models  
 from .routers import (
-    lesson,
     post_test,
     auth,
     logout,
@@ -9,6 +9,7 @@ from .routers import (
     subject,
     classes,
     class_enrollment,
+    # lesson
 )
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,7 +30,7 @@ app.include_router(subject.router)
 app.include_router(classes.router)
 app.include_router(class_enrollment.router)
 app.include_router(teacher_router)
-app.include_router(lesson.router)
+# app.include_router(lesson.router)
 app.include_router(post_test.router)
 app.include_router(logout.router)
 

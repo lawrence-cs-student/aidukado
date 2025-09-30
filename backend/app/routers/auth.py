@@ -40,46 +40,54 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login")
-def login(user: UserLogin, response : Response ,db: Session = Depends(get_db)):
-    
+def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
     db_user = db.query(Users).filter(Users.email == user.email).first()
-    
+
     if not db_user or not verify_password(user.password, db_user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="invalid email or password"
+            detail="Invalid email or password"
         )
-    
+
     access_token_expires = timedelta(minutes=30)
     refresh_token_expires = timedelta(days=7)
+
+   
+    payload = {
+        "sub": str(db_user.id),   
+        "role": db_user.role
+    }
+
+    access_token = create_access_token(payload, access_token_expires)
+    refresh_token = create_access_token(payload, refresh_token_expires)
+
     
-    
-    access_token = create_access_token({"sub": db_user.email, "role": db_user.role}, access_token_expires)
-    refresh_token = create_access_token ({"sub": db_user.email, "role": db_user.role}, refresh_token_expires)
-    
-    
-    response_role = JSONResponse(content={"message": "Login Successful", "role" : db_user.role})
-    
+    response_body = {
+        "message": "Login Successful",
+        "id": db_user.id,
+        "role": db_user.role
+    }
+
     response.set_cookie(
         key="access_token",
         value=access_token,
-        httponly = True,
-        secure = False,
-        samesite = "Strict",
-        max_age = 60 * access_token_expires
+        httponly=True,
+        secure=False,   
+        samesite="Strict",
+        max_age=int(access_token_expires.total_seconds())
     )
-    
+
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=False,
+        secure=False,   # ⚠️ set to True in production
         samesite="Strict",
-        max_age= 60* refresh_token_expires
+        max_age=int(refresh_token_expires.total_seconds())
     )
-    
-    
-    return response_role
+
+    return JSONResponse(content=response_body)
+
     
     
 @router.post("/refresh", response_model=TokenResponse)

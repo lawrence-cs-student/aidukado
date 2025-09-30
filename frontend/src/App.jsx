@@ -8,7 +8,7 @@ import PostTest from './pages/PostTest';
 import Login from "./components/Login";
 import Signup from "./pages/Users/AddUser";
 import StudentArea from './pages/StudentArea';
-import SelectedSubject from './pages/SelectedSubject';
+
 import RoleProtectedRoute from './components/RoleProtectedRoute';
 import AdminDashboard from './pages/AdminDashboard';
 import UserManagement from './pages/AdminPages/UserManagement';
@@ -18,6 +18,10 @@ import EnrollmentManagement from './pages/AdminPages/EnrollmentManagement';
 import AboutPage from './pages/About';
 import Settings from './pages/Settings';
 import StudentClasses from './pages/StudentClasses';
+import TeacherClasses from './pages/TeacherClasses';
+import SelectedClass from './pages/SelectedClass';
+import SelectedLesson from './pages/SelectedLesson';
+
 
 function AppContent() {
   const location = useLocation();
@@ -57,16 +61,22 @@ function AppContent() {
           <Route path="/postTest" element={<PostTest/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+
+          <Route path='/studentClasses' element={<StudentClasses />}/>
+
           <Route 
-            path="/selectedSubject" 
+            path='/teacherClasses' 
             element={
-              <RoleProtectedRoute allowed_roles={"student"}>
-                <SelectedSubject />
+              <RoleProtectedRoute allowed_roles={"teacher"}>
+                <TeacherClasses />
               </RoleProtectedRoute>
-            } 
+            }
           />
 
-          <Route path='classes' element={<StudentClasses />}/>
+
+          <Route path='/selectedClass/:id' element={<SelectedClass />}/>
+          <Route path='/selectedLesson' element={<SelectedLesson />} />
+          
           <Route path='/userManagement' element={<UserManagement/>}/>
           <Route path='/classManagement' element={<ClassManagement/>}/>
           <Route path='/subjectManagement' element={<SubjectManagement/>} />
