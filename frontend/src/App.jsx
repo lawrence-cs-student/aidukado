@@ -21,7 +21,7 @@ import StudentClasses from './pages/StudentClasses';
 import TeacherClasses from './pages/TeacherClasses';
 import SelectedClass from './pages/SelectedClass';
 import SelectedLesson from './pages/SelectedLesson';
-
+import TermPage from './pages/TermPage';
 
 function AppContent() {
   const location = useLocation();
@@ -64,18 +64,25 @@ function AppContent() {
 
           <Route path='/studentClasses' element={<StudentClasses />}/>
 
-          <Route 
+          {/* <Route 
             path='/teacherClasses' 
             element={
               <RoleProtectedRoute allowed_roles={"teacher"}>
                 <TeacherClasses />
               </RoleProtectedRoute>
             }
+          /> */}
+
+          <Route 
+            path="/teacherClasses" 
+            element={<TeacherClasses />} 
           />
 
 
-          <Route path='/selectedClass/:id' element={<SelectedClass />}/>
+
+          <Route path='/selectedClass/:classId/:term' element={<SelectedClass />}/>
           <Route path='/selectedLesson' element={<SelectedLesson />} />
+          <Route path='/termPage' element={<TermPage />} />
           
           <Route path='/userManagement' element={<UserManagement/>}/>
           <Route path='/classManagement' element={<ClassManagement/>}/>

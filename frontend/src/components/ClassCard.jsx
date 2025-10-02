@@ -1,13 +1,17 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import useClassStore from "../store/useClassStore";
 
 export default function ClassCard({ subjectName, teacher, classId}) {
   const navigate = useNavigate();
 
+  const storeClassId = useClassStore((state) => state.storeClassId)
+
   const handleClick = (e) => {
     e.preventDefault();
-    navigate(`/selectedClass/${classId}`);
+    storeClassId(classId);
+    navigate(`/termPage`);
   }
 
   return (
@@ -26,10 +30,7 @@ export default function ClassCard({ subjectName, teacher, classId}) {
           <div>
             <p className="text-xl sm:text-2xl font-bold text-white">{subjectName}</p> 
           </div>
-
-          <p className=" text-xs hidden sm:block text-[#F5C45E]">{`${teacher.firstName} ${teacher.lastName}`}</p>
           
-
           <div className="mt-auto flex justify-between sm:hidden space-x-4 w-full gap-7">
             <p className="text-yellow-400 truncate">{`${teacher.firstName} ${teacher.lastName}`}</p>
           </div>

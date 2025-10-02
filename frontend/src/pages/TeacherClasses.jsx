@@ -6,25 +6,44 @@ import useUserStore from "../store/useUserStore.jsx";
 
 export default function StudentClasses() {
 
-  const teacherId = useUserStore((state) => state.userId)
+  // const teacherId = useUserStore((state) => state.userId)
 
+  const teacherId = 1;
 
-  const [classes, setClasses] = useState([])
+  const classes = [
+    {
+      id: 1,
+      name: "Programming",
+      userTeacher: { firstName: "Alice", lastName: "Johnson" }
+    },
+    {
+      id: 2,
+      name: "Data Structures",
+      userTeacher: { firstName: "Bob", lastName: "Smith" }
+    },
+    {
+      id: 3,
+      name: "Database Systems",
+      userTeacher: null // to test the "Unknown Teacher"
+    },
+  ];
+
+  // const [classes, setClasses] = useState([])
   
 
-  useEffect(() => {
-    if(!teacherId) return
+  // useEffect(() => {
+  //   if(!teacherId) return
 
-    const getClasses = async () => {
-      try{
-        const response = await axios.get(`http://localhost:8000/classes/getByUserId/${teacherId}`)
-        setClasses(response.data)
-      }catch(error){
-        console.error("Error fetching classes ", error)
-      }
-    }
-    getClasses() 
-  }, [teacherId]) 
+  //   const getClasses = async () => {
+  //     try{
+  //       const response = await axios.get(`http://localhost:8000/classes/getByUserId/${teacherId}`)
+  //       setClasses(response.data)
+  //     }catch(error){
+  //       console.error("Error fetching classes ", error)
+  //     }
+  //   }
+  //   getClasses() 
+  // }, [teacherId]) 
 
   return (
     <main className="flex flex-col p-[2%]">

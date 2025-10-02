@@ -16,78 +16,57 @@ export default function SelectedSubject() {
 
 //   const [lessons, setLessons] = useState([])
 
-const lessons = [
-  // Prelim
-  { id: 1, name: "Lesson 1", term: "Prelim" },
-  { id: 2, name: "Lesson 2", term: "Prelim" },
-  { id: 3, name: "Lesson 3", term: "Prelim" },
-  { id: 4, name: "Lesson 4", term: "Prelim" },
-
-  // Midterm
-  { id: 5, name: "Lesson 5", term: "Midterm" },
-  { id: 6, name: "Lesson 6", term: "Midterm" },
-  { id: 7, name: "Lesson 7", term: "Midterm" },
-  { id: 8, name: "Lesson 8", term: "Midterm" },
-
-  // Final
-  { id: 9, name: "Lesson 9", term: "Midterm" },
-  { id: 10, name: "Lesson 10", term: "Final" },
-  { id: 11, name: "Lesson 11", term: "Final" },
-  { id: 12, name: "Lesson 12", term: "Final" },
-  { id: 13, name: "Lesson 12", term: "Final" },
-];
-
-
-
   const [fetchLessonsError, setFetchLessonsError] = useState("")
   
-  const { id } = useParams();
+  const { classId, term } = useParams();
 
-  const getLessons = async() => {
-    try {
-        const response = await axios.get(`http://localhost:8000/lessons/getById/${id}`)
-        setLessons(response.data)
-    } catch(err) {
-        if(err.response?.data?.detail) {
-            setFetchLessonsError(err.response.data.detail)
-        } else {
-            setFetchLessonsError("Network Error")
-         }
-    }
-  }
+//   const getLessons = async() => {
+//     try {
+//         const response = await axios.get(`http://localhost:8000/lessons/getById/${classId}`)
+//         setLessons(response.data)
+//     } catch(err) {
+//         if(err.response?.data?.detail) {
+//             setFetchLessonsError(err.response.data.detail)
+//         } else {
+//             setFetchLessonsError("Network Error")
+//          }
+//     }
+//   }
 
   
 
-  useEffect(() => {
-    getLessons();
-  } , [id])
+//   useEffect(() => {
+//     getLessons();
+//   } , [classId])
 
+  const lessons = [
+      { id: 1, name: "Intro to Programming", term: "Prelim" },
+      { id: 2, name: "Data Structures", term: "Prelim" },
+      { id: 3, name: "Algorithms", term: "Midterm" },
+      { id: 4, name: "Databases", term: "Final" },
+      { id: 5, name: "Operating Systems", term: "Final" },
+      { id: 6, name: "Operating Systems", term: "Prelim" },
+      { id: 7, name: "Databases", term: "Prelim" },
+      { id: 8, name: "Databases", term: "Prelim" },
+  ];
 
-  const groupedLessons = useMemo(() => {
-
-    const terms = ["Prelim", "Midterm", "Final"];
-    const grouped = {};
-
-    terms.forEach((term) => {
-        grouped[term] = lessons.filter((lesson) => lesson.term === term);
-    });
-
-    return grouped;
-  }, [lessons]);
+  const filteredLessons = useMemo(() => {
+    return lessons.filter((lesson) => lesson.term === term) 
+  }, [lessons, term])
 
   
 
   return (
-    <div className="flex flex-col w-full h-full p-5">
+    <div className="flex flex-col w-full h-full p-5 gap-5 items-center">
         <div
             className="
             flex flex-col
             w-3/4 sm:w-[70%]
             min-h-[150px] 
             h-auto         
-            p-2 mx-auto
+            p-2
             truncate
-            bg-gradient-to-t from-sky-500 to-indigo-500
+            bg-[#F4F6FF]
         "
         >
             <div 
@@ -100,23 +79,26 @@ const lessons = [
             
         </div>
 
-        <div className="flex flex-row justify-end w-3/4 sm:w-[70%] mt-5 mx-auto">
-            <button onClick={() => setIsOpen(true)} className="w-1/2 sm:w-[15%] shadow-xl rounded p-2 text-white font-bold bg-[#F3C623]" > Upload + </button>
+        <div className="flex flex-row w-3/4 sm:w-[70%] mx-auto mt-4">
+            <button 
+              onClick={() => setIsOpen(true)} 
+              className="w-1/2 sm:w-[15%] shadow-xl rounded p-2 text-white font-bold bg-[#F5C45E] 
+              hover:bg-[#F4F6FF] hover:text-[#102E50] transition-transform duration-300" 
+            > 
+              Upload + 
+            </button>
         </div>
 
-
-        {Object.entries(groupedLessons).map(([term, lessons]) => (
-            <div key={term} 
-                 className="flex flex-col w-3/4 sm:w-[70%] mx-auto h-auto"
-            >
-                <TermCard term={term.toUpperCase()}/>
-                <div className="flex flex-wrap gap-[3%] flex-row w-3/4 sm:w-full sm:h-auto">
-                    {lessons.map((lesson) => (
-                        <LessonCard key={lesson.id} lessonName={lesson.name}/>
-                    ))}
-                </div>
-            </div>
-        ))}
+        <div className="w-3/4 sm:w-[70%] mt-10">
+          <h2 className="text-[#F5C45E] font-bold text-2xl">{term}'s Lessons</h2>
+        </div>
+        
+        <div className="flex flex-wrap gap-2 space-between w-3/4 sm:w-[70%]">
+            {filteredLessons.map((lesson) => (
+                <LessonCard key={lesson.id} lessonName={lesson.name}/>
+            ))}
+        </div>
+        
 
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Upload a Lesson" panelStyle={panelStyle}>
             <UploadLesson setIsOpen={setIsOpen}/>
