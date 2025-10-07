@@ -2,7 +2,7 @@
 
 
 
-export default function FileUploader() {
+export default function FileUploader({type, handleFileChange}) {
   return (
     <div className="w-full mx-auto p-6 border-2 border-dashed rounded-lg bg-gray-50">
       <label
@@ -14,6 +14,8 @@ export default function FileUploader() {
       <input
         type="file"
         id="file-upload"
+        accept={type}
+        onChange={handleFileChange}
         className="block w-full text-sm text-[#102E50] border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none
                    file:mr-4 file:py-2 file:px-4
                    file:rounded-md file:border-0

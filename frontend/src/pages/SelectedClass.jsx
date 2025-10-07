@@ -12,7 +12,7 @@ export default function SelectedSubject() {
     
   const [isOpen, setIsOpen] = useState(false);
   const panelStyle = "w-full sm:h-[70%] max-w-lg rounded-xl shadow-xl"
-
+  const [successMessage, setSuccessMessage] = useState("");
 
 //   const [lessons, setLessons] = useState([])
 
@@ -87,6 +87,7 @@ export default function SelectedSubject() {
             > 
               Upload + 
             </button>
+            {successMessage && (<p className="text-green-800">{successMessage}</p>)}
         </div>
 
         <div className="w-3/4 sm:w-[70%] mt-10">
@@ -101,7 +102,15 @@ export default function SelectedSubject() {
         
 
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Upload a Lesson" panelStyle={panelStyle}>
-            <UploadLesson setIsOpen={setIsOpen}/>
+            <UploadLesson 
+              setSuccessMessage={setSuccessMessage}
+              setIsOpen={setIsOpen} 
+              term={term}
+              onSuccess={() => {
+                // getLessons();
+                setIsOpen(false);
+              }}
+            />
         </Modal>
     </div>
   );

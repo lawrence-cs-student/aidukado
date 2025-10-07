@@ -20,6 +20,6 @@ def upload_file(file, folder):
     file_extension= file.filename.split(".")[-1]
     file_key= f"{folder}/{uuid.uuid4()}.{file_extension}"
     
-    s3_client.upload_fileobj(file.file, R2_BUCKET, file_key, ExtraArgs={"ExpectedBucketOwner": "<your-account-id>"})
+    s3_client.upload_fileobj(file.file, R2_BUCKET, file_key, ExtraArgs={"ContentType": file.content_type})
     
     return file_key

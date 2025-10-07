@@ -60,7 +60,7 @@ export default function SubjectManagement() {
                 <SearchForm query={query} setQuery={setQuery} inputPlaceholder="Search by subject name"/>
                 <button className=" bg-[#102E50] shadow-md" onClick={() => (setIsOpen(true))}>+ Add Subject</button>
             </div>
-            <div className="w-1/2 flex justify-center items-center">
+            <div className="w-1/2 flex flex-col justify-center items-center">
                 {!loading ? (
                     <Table 
                         data={subjectData} 

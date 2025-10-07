@@ -2,6 +2,7 @@ import { useEffect, useState} from "react"
 import axios from "axios";
 import Modal from "../../components/Modal";
 import AddUser from "../Users/AddUser";
+import BatchAddUser from "../Users/BatchAddUser";
 import DeleteUser from "../Users/DeleteUser";
 import EditUser from "../Users/EditUser";
 import Table from "../../components/Table"
@@ -33,6 +34,7 @@ export default function UserManagement() {
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenEditModal, setIsOpenEditModal]  = useState(false)
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+    const [isOpenBatchModal, setIsOpenBatchModal] = useState(false);
     const [selectedUserData, setSelectedUserData] = useState(null);
 
     const getUsers = async() => {
@@ -67,6 +69,7 @@ export default function UserManagement() {
     const panelStyleAdd = "w-full h-2/3 max-w-lg rounded-xl shadow-xl"
     const panelStyleDelete = "w-full h-1/3 max-w-lg rounded-xl shadow-xl"
     const panelStyleEdit = "w-full h-2/3 max-w-lg rounded-xl shadow-xl"
+    const panelStyleAddBatch = "w-full h-1/3 max-w-lg rounded-xl shadow-xl"
 
     return (
         <div className="flex flex-col w-full h-screen gap-[2%] p-[2%] items-center">
@@ -74,6 +77,7 @@ export default function UserManagement() {
                 
                 <SearchForm query={query} setQuery={setQuery} inputPlaceholder="Search by email or name"/>
                 <button className=" bg-[#102E50] shadow-md" onClick={() => (setIsOpen(true))}>+ Add User</button>
+                <button className=" bg-[#102E50] shadow-md" onClick={() => (setIsOpenBatchModal(true))}>+ Upload Users</button>
             </div>
 
             <div className="overflow-x-auto w-4/5">
@@ -127,6 +131,17 @@ export default function UserManagement() {
                     }
                         
                     }
+                />
+            </Modal>
+            
+            {/* Modal for excel registration */}
+            <Modal isOpen={isOpenBatchModal} onClose={() => setIsOpenBatchModal(false)} title="Register" panelStyle={panelStyleAddBatch}>
+                <BatchAddUser
+                        onClose={() => setIsOpenBatchModal(false)}
+                        onSuccess={() => {
+                            getUsers();
+                            setIsOpenBatchModal(false);
+                        }}
                 />
             </Modal>
         </div>

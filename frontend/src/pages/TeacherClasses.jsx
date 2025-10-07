@@ -8,7 +8,7 @@ export default function StudentClasses() {
 
   // const teacherId = useUserStore((state) => state.userId)
 
-  const teacherId = 1;
+  const teacherId = 2;
 
   const classes = [
     {

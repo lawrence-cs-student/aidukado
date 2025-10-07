@@ -3,7 +3,8 @@ import axios from "axios";
 
 export default function DeleteUser({ userId, onClose, onSuccess}) {
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
             await axios.delete(`http://localhost:8000/user/delete/${userId}`, )
             if(onSuccess) onSuccess();

@@ -56,6 +56,28 @@ def get_all_students(db: Session = Depends(get_db)):
     
     return students
 
+@router.post("/batch_create")
+def create_multiple_users(users: list[UserCreate], db: Session = Depends(get_db)):
+   
+    try:
+        for user in users:
+            password = hash_password(user.password)
+        
+            new_user = Users(
+                last_name = user.last_name,
+                first_name = user.first_name,
+                middle_name = user.middle_name,
+                email = user.email,
+                password_hash = password,
+                role = "student"
+            )
+            db.add(new_user)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return {"message" : "Users Registered Successfully"}
 
 @router.post("/create")
 def create_user(user:UserCreate, db: Session = Depends(get_db)):

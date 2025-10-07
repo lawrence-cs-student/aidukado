@@ -64,8 +64,6 @@ export default function AddUser({ onSuccess, onClose }) {
 
     try {
 
-      
-
       const res = await axios.post("http://localhost:8000/user/create", formData, {
         headers: { "Content-Type": "application/json" }
       });
@@ -166,6 +164,7 @@ export default function AddUser({ onSuccess, onClose }) {
           <option value="">Select a role</option>
           <option value="student">Student</option>
           <option value="teacher">Teacher</option>
+          <option value="admin">Admin</option>
         </select>
 
         <button
