@@ -54,7 +54,7 @@ export default function Login() {
 
         try {
             const response = await axios.post("http://localhost:8000/auth/login", formData, 
-                {headers : {"Content-Type" : "application/json"} }
+                {headers : {"Content-Type" : "application/json"}, withCredentials: true }
             );
 
             setSuccess(`User ${response.data.email} authenticated`);

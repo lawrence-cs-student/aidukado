@@ -18,6 +18,7 @@ import axios from "axios";
 export default function Sidebar() {
 
   const userRole = useUserStore((state) => state.userRole)
+  //const userRole = 'admin'
   const clearUserRole = useUserStore((state) => state.clearUser)
   const navigate = useNavigate();
 

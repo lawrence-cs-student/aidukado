@@ -21,6 +21,8 @@ import StudentClasses from './pages/StudentClasses';
 import TeacherClasses from './pages/TeacherClasses';
 import SelectedClass from './pages/SelectedClass';
 import SelectedLesson from './pages/SelectedLesson';
+import TeacherAssignment from './pages/teacherAssignments';
+import StudentTest from './components/studentTest';
 
 
 function AppContent() {
@@ -76,6 +78,8 @@ function AppContent() {
 
           <Route path='/selectedClass/:id' element={<SelectedClass />}/>
           <Route path='/selectedLesson' element={<SelectedLesson />} />
+          <Route path='/teacherAssignments' element={<TeacherAssignment/>} />
+          <Route path='/studentTest' element={<StudentTest/>} />
           
           <Route path='/userManagement' element={<UserManagement/>}/>
           <Route path='/classManagement' element={<ClassManagement/>}/>
