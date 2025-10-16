@@ -12,7 +12,8 @@ from .routers import (
     classes,
     class_enrollment,
     getLesson,
-    score
+    score,
+    summary
     # lesson
 )
 
@@ -41,4 +42,5 @@ app.include_router(logout.router)
 app.include_router(getLesson.router)
 app.include_router(quizzes.router)
 app.include_router(score.router)
+app.include_router(summary.router)
 

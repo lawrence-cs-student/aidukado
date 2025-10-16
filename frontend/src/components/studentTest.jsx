@@ -12,7 +12,9 @@ export default function StudentTest() {
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
   const student_id = useUserStore((state) => state.userId);
+
 
   const questionPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,7 +29,27 @@ export default function StudentTest() {
     const fetchQuiz = async () => {
       try {
         const response = await axios.get( `http://localhost:8000/getQuiz/${lessonId}`);
-        setQuiz(response.data);
+        const quizData = response.data;
+        setQuiz(quizData);
+        console.log(response.data.duration);
+        console.log(response.data.start_time);
+
+        const endTime = new Date(quizData.start_time);
+        endTime.setMinutes(endTime.getMinutes() + quizData.duration);
+
+        const updateTime = () => {
+          const now = new Date();
+          const diff = endTime - now ;
+          setTimeLeft(diff > 0? diff : 0)
+
+          if (diff <= 0){
+            setSubmitted(true);
+          }
+        }
+
+        updateTime();
+        const interval = setInterval(updateTime, 1000);
+        return () => clearInterval(interval);
 
       } catch (error) {
         console.error("Error fetching quiz:", error);
@@ -83,12 +105,22 @@ export default function StudentTest() {
     }
   };
 
+  const formatTime = (ms) => {
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    };
+
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
       <div className="w-full max-w-4xl bg-white text-black rounded-2xl shadow-xl p-8 sm:p-10 overflow-y-auto max-h-[90vh]">
         <h1 className="text-2xl sm:text-3xl font-bold text-[#333446] mb-6 text-center">
-          {quiz.title || "Lesson Quiz"}
+          { quiz.title || "Lesson Quiz"}
         </h1>
+        <p className="font-semibold mb-4 text-center">
+          Time left: ⏱ {formatTime(timeLeft)}
+        </p>
 
         {currentQuestions.length > 0 ? (
           currentQuestions.map((q, index) => {

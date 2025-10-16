@@ -23,6 +23,7 @@ import SelectedClass from './pages/SelectedClass';
 import SelectedLesson from './pages/SelectedLesson';
 import TeacherAssignment from './pages/teacherAssignments';
 import StudentTest from './components/studentTest';
+import Summary from './components/summary';
 
 
 function AppContent() {
@@ -80,6 +81,7 @@ function AppContent() {
           <Route path='/selectedLesson' element={<SelectedLesson />} />
           <Route path='/teacherAssignments' element={<TeacherAssignment/>} />
           <Route path='/studentTest' element={<StudentTest/>} />
+          <Route path='/summary' element={<Summary/>} />
           
           <Route path='/userManagement' element={<UserManagement/>}/>
           <Route path='/classManagement' element={<ClassManagement/>}/>

@@ -25,7 +25,9 @@ def assign_quiz(quiz: CreateQuiz, db: Session = Depends(get_db)):
         description = quiz.description,
         total_points = quiz.total_points,
         instruction = quiz.instruction,
-        quiz_content = quiz.quiz_content 
+        quiz_content = quiz.quiz_content,
+        start_time = quiz.start_time,
+        duration = quiz.duration
     )
     db.add(new_quiz)
     db.commit()

@@ -14,10 +14,11 @@ export default function AITest() {
 
   const [quizTitle, setQuizTitle] = useState("");
   const [quizItems, setQuizItems] = useState("");
-  const [quizTimer, setQuizTimer] = useState("");
   const [quizType, setQuizType] = useState("");
   const [description, setDescription] = useState("");
   const [instruction, setInstruction] = useState("");
+  const [startTime, setStartTime] = useState();
+  const [duration, setDuration] = useState();
 
   const handleUpload = async () => {
     //display the timer on the page and edit and assign button 
@@ -45,9 +46,9 @@ export default function AITest() {
       setQuestions(quizResponse.data.pretest);
 
     } catch (error) {
-      console.error("Upload error:", error)
+      console.error("Upload error:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
     
   };
@@ -85,11 +86,19 @@ export default function AITest() {
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
-          <label> Set Timer: </label>
+          <label> Set start time: </label>
           <input
-            value={quizTimer}
-            onChange={(e) => setQuizTimer(e.target.value)}
-            type="text"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            type="datetime-local"
+            className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+
+          <label> Set Quiz Duration:  </label>
+          <input
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            type="number"
             placeholder="Set quiz timer"
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
@@ -135,7 +144,7 @@ export default function AITest() {
 
       {!loading && questions.length > 0 && (
         <div>
-          <Test questions={questions} title={quizTitle} total_points={quizItems} lesson_id={lessonId} description={description} instruction={instruction} />
+          <Test questions={questions} title={quizTitle} total_points={quizItems} lesson_id={lessonId} description={description} instruction={instruction} duration={duration} start_time={startTime} />
         </div>
       )}
 

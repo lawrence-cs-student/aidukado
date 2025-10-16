@@ -13,5 +13,8 @@ class Quizzes(Base):
     instruction = Column(Text, nullable=True)
     quiz_content = Column(JSON)
     created_at = Column(DateTime(timezone=True), server_default=func.now()) 
+    start_time = Column(DateTime)
+    duration = Column(Integer)
+    
 
     

@@ -24,6 +24,10 @@ export default function SelectedLesson() {
         
     }
 
+    const handleSummary = async () => {
+        navigate('/summary')
+    }
+
     const buttonStyle = "rounded-xl flex justify-center item-center text-[#102E50] bg-[#F4F6FF] font-bold"
     return (
         <div className="w-full h-full flex flex-col items-center sm:p-[4%] gap-[5%]">
@@ -33,7 +37,7 @@ export default function SelectedLesson() {
                 <div className="flex sm:gap-[1%] mt-[4%]">
                     <button className={buttonStyle} onClick={handleQuiz} >QUIZ</button>
                     <button className={buttonStyle}>ACTIVITY</button>
-                    <button className={buttonStyle}>SUMMARY</button>
+                    <button className={buttonStyle} onClick={handleSummary}>SUMMARY</button>
                 </div>
             </div>
             <div className="w-4/5 h-3/4 bg-red-500">
