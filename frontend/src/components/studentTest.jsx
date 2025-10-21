@@ -1,56 +1,37 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Pagination from "../components/Pagination";
 import useUserStore from "../store/useUserStore";
 
 export default function StudentTest() {
   const navigate = useNavigate();
+  const student_id = useUserStore((state) => state.userId);
 
   const [quiz, setQuiz] = useState({ quiz_content: [] });
-  const [lessonId, setLessonId] = useState(2);
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
-  const student_id = useUserStore((state) => state.userId);
 
+  const [lessonId, setLessonId] = useState(2);
 
-  const questionPerPage = 5;
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const indexOfLastQuestion = currentPage * questionPerPage;
-  const indexOfFirstQuestion = indexOfLastQuestion - questionPerPage;
-
-  const currentQuestions = quiz?.quiz_content?.slice(indexOfFirstQuestion, indexOfLastQuestion) || [];
-  const totalPages = Math.ceil((quiz?.quiz_content?.length || 0) / questionPerPage);
-
+  // Fetch quiz and calculate remaining time
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const response = await axios.get( `http://localhost:8000/getQuiz/${lessonId}`);
-        const quizData = response.data;
-        setQuiz(quizData);
-        console.log(response.data.duration);
-        console.log(response.data.start_time);
+        const res = await axios.get(`http://localhost:8000/getQuiz/${lessonId}`);
+        setQuiz(res.data);
 
-        const endTime = new Date(quizData.start_time);
-        endTime.setMinutes(endTime.getMinutes() + quizData.duration);
+        const startTime = new Date(res.data.start_time);
+        const durationMinutes = res.data.duration || 10; // fallback 10 minutes
+        const endTime = new Date(startTime.getTime() + durationMinutes * 60000);
+        const remaining = Math.max(0, endTime - new Date());
+        setTimeLeft(remaining);
 
-        const updateTime = () => {
-          const now = new Date();
-          const diff = endTime - now ;
-          setTimeLeft(diff > 0? diff : 0)
-
-          if (diff <= 0){
-            setSubmitted(true);
-          }
+        // Auto-submit immediately if time is already up
+        if (remaining <= 0) {
+          handleSubmit(true, res.data.quiz_content);
         }
-
-        updateTime();
-        const interval = setInterval(updateTime, 1000);
-        return () => clearInterval(interval);
-
       } catch (error) {
         console.error("Error fetching quiz:", error);
       }
@@ -58,134 +39,137 @@ export default function StudentTest() {
     fetchQuiz();
   }, [lessonId]);
 
-  const getOption = (optionString) => optionString.trim().charAt(0).toUpperCase();
+  // Countdown timer
+  useEffect(() => {
+    if (submitted || timeLeft <= 0) return;
 
-  const handleOptionChange = (question, selectedOptionText) => {
-    const selectedOption = getOption(selectedOptionText);
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1000) {
+          clearInterval(interval);
+          handleSubmit(true); // auto-submit
+          return 0;
+        }
+        return prev - 1000;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [submitted, timeLeft]);
+
+  const handleOptionChange = (qIndex, selectedText) => {
     setUserAnswers((prev) => ({
       ...prev,
-      [question]: selectedOption,
+      [qIndex]: selectedText,
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (auto = false, quizContent = quiz.quiz_content) => {
     let totalScore = 0;
-    let unAnsweredQuestions = 0;
 
-    quiz.quiz_content.forEach((q, index) => {
-      const correctAnswer = q.answer?.trim().toUpperCase();
-      const currentUserAnswer = userAnswers[index]?.trim().toUpperCase() || null;
-
-      if (currentUserAnswer === null) unAnsweredQuestions++;
-      if (currentUserAnswer === correctAnswer) totalScore++;
+    quizContent.forEach((q, index) => {
+      const correctAnswer = q.answer?.trim();
+      const studentAnswer = userAnswers[index] || ""; // empty string counts as wrong
+      if (studentAnswer === correctAnswer) totalScore++;
     });
 
-    if (unAnsweredQuestions > 0) {
-      alert("Please answer all questions before submitting");
-    } else {
-      setScore(totalScore);
-      setSubmitted(true);
-    }
+    setScore(totalScore);
+    setSubmitted(true);
 
-    try{
-        const score = {
-            student_id,
-            test_type: quiz.title,
-            test_id: 1,
-            score: totalScore
-        } 
-        console.log(score);
-        const response = await axios.post("http://localhost:8000/saveScore", score, {
-            headers: {
-                "Content-Type" : "application/json",
-            },
-        })
-    }catch (error){
-        console.log('Error: ', error)
+    try {
+      await axios.post("http://localhost:8000/saveScore", {
+        student_id,
+        test_type: quiz.title,
+        test_id: quiz.id,
+        score: totalScore,
+        auto_submit: auto,
+      });
+    } catch (error) {
+      console.error("Error saving score:", error);
     }
   };
 
   const formatTime = (ms) => {
-      const totalSeconds = Math.floor(ms / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
-      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-    };
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
       <div className="w-full max-w-4xl bg-white text-black rounded-2xl shadow-xl p-8 sm:p-10 overflow-y-auto max-h-[90vh]">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#333446] mb-6 text-center">
-          { quiz.title || "Lesson Quiz"}
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">
+          {quiz.title || "Lesson Quiz"}
         </h1>
+
         <p className="font-semibold mb-4 text-center">
           Time left: ⏱ {formatTime(timeLeft)}
         </p>
 
-        {currentQuestions.length > 0 ? (
-          currentQuestions.map((q, index) => {
-            const questionIdentifier = indexOfFirstQuestion + index;
-            const correctAnswer = q.answer?.trim().toUpperCase();
-            const currentUserAnswer = userAnswers[questionIdentifier]?.trim().toUpperCase() || null;
+        {quiz.quiz_content.length === 0 && <p>No questions available.</p>}
 
-            return (
-              <div
-                key={questionIdentifier}
-                className="mb-8 p-4 border border-gray-200 rounded-xl bg-[#F9FAFB]"
-              >
-                <p className="font-semibold text-lg mb-3">{q.question}</p>
+        {quiz.quiz_content.map((q, index) => {
+          const studentAnswer = userAnswers[index] || "";
+          const isCorrect = submitted && studentAnswer === q.answer;
 
-                <ul className="space-y-2">
-                  {q.options.map((opt, i) => (
-                    <li key={i}>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name={`question-${questionIdentifier}`}
-                          value={opt}
-                          onChange={() =>
-                            handleOptionChange(questionIdentifier, opt)
-                          }
-                          checked={currentUserAnswer === getOption(opt)}
-                          disabled={submitted}
-                          className="accent-[#424874]"
-                        />
-                        <span className="text-gray-800">{opt}</span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
+          return (
+            <div
+              key={index}
+              className="mb-8 p-4 border border-gray-200 rounded-xl bg-[#F9FAFB]"
+            >
+              {q.question && <p className="font-semibold text-lg mb-3">{q.question}</p>}
+              {q.questionImage && (
+                <img src={q.questionImage} alt="Question" className="max-w-xs rounded-lg mb-3 border" />
+              )}
 
-                {submitted && (
-                  <div className="mt-2">
-                    {currentUserAnswer === correctAnswer ? (
-                      <p className="text-green-600 font-medium">✅ Correct!</p>
-                    ) : (
-                      <p className="text-red-600 font-medium">
-                        ❌ Incorrect. Correct Answer:{" "}
-                        <span className="font-semibold">
-                          {q.options.find(
-                            (opt) => getOption(opt) === correctAnswer
-                          ) || "N/A"}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })
-        ) : (
-          <p className="text-gray-600 text-center">No questions found.</p>
-        )}
+              <ul className="space-y-2">
+                {q.options.map((opt, i) => (
+                  <li key={i}>
+                    <label className="flex flex-col sm:flex-row items-start sm:items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name={`question-${index}`}
+                        value={opt.text}
+                        checked={studentAnswer === opt.text}
+                        onChange={() => handleOptionChange(index, opt.text)}
+                        disabled={submitted}
+                        className="accent-[#424874]"
+                      />
+                      <div className="flex flex-col items-start gap-1">
+                        {opt.text && <span>{opt.text}</span>} 
+                        {opt.image && (
+                          <img src={opt.image} alt="Option" className="max-w-[150px] mt-2 sm:mt-0 rounded border" />
+                        )}
+                      </div>
+                    </label>
+                  </li>
+                ))}
+              </ul>
 
-        {quiz.quiz_content.length > questionPerPage && !submitted && (
-          <div className="mt-6 flex justify-center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
+              {submitted && (
+                <div className="mt-2">
+                  {isCorrect ? (
+                    <p className="text-green-600 font-medium">✅ Correct!</p>
+                  ) : (
+                    <p className="text-red-600 font-medium">
+                      ❌ Incorrect. Correct Answer: {q.answer}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {!submitted && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => handleSubmit(false)}
+              className="px-8 py-3 bg-[#424874] text-white font-semibold rounded-lg hover:bg-[#2f355d] transition"
+            >
+              Submit Answers
+            </button>
           </div>
         )}
 
@@ -199,17 +183,6 @@ export default function StudentTest() {
               onClick={() => navigate("/selectedLesson")}
             >
               Back
-            </button>
-          </div>
-        )}
-
-        {!submitted && currentPage === totalPages && (
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={handleSubmit}
-              className="px-8 py-3 bg-[#424874] text-white font-semibold rounded-lg hover:bg-[#2f355d] transition"
-            >
-              Submit Answers
             </button>
           </div>
         )}

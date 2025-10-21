@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 
-// Save to database the lesson id, qid, question-correct-answer
-export default function Questions({ questions = [], title, total_points, lesson_id, description, instruction, duration, start_time}) {
-  
+export default function Questions({
+  questions = [],
+  title,
+  total_points,
+  lesson_id,
+  description,
+  instruction,
+  duration,
+  start_time,
+}) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editableQuestion, setEditableQuestion] = useState(questions);
+  const [editableQuestion, setEditableQuestion] = useState([]);
 
-  // Set editable questions whenever new ones arrive
   useEffect(() => {
-    setEditableQuestion(questions);
+    // Normalize structure (ensures options are always objects)
+    const normalized = questions.map((q) => ({
+      ...q,
+      options: q.options.map((opt) =>
+        typeof opt === "string" ? { text: opt, image: null } : opt
+      ),
+      questionImage: q.questionImage || null,
+    }));
+    setEditableQuestion(normalized);
   }, [questions]);
 
-  
-
-  const handleOptionChange = (question, selectedOptionText) => {
-    setAnswer((prev) => ({
-      ...prev,
-      [question]: selectedOptionText,
-    }));
+  // Converts uploaded file to base64 for preview and storage
+  const convertToBase64 = (file, callback) => {
+    const reader = new FileReader();
+    reader.onloadend = () => callback(reader.result);
+    reader.readAsDataURL(file);
   };
 
   const handleQuestionChange = (index, value) => {
@@ -29,41 +41,56 @@ export default function Questions({ questions = [], title, total_points, lesson_
 
   const handleOptionTextChange = (qIndex, oIndex, value) => {
     const updated = [...editableQuestion];
-    updated[qIndex].options[oIndex] = value;
+    updated[qIndex].options[oIndex].text = value;
     setEditableQuestion(updated);
   };
 
-  const handleAssign = async () => {
-    try{
-        const quizData = {
-            lesson_id,
-            title,
-            description,
-            total_points,
-            instruction,
-            quiz_content: editableQuestion,
-            start_time,
-            duration
+  const handleQuestionImageUpload = (index, file) => {
+    convertToBase64(file, (base64) => {
+      const updated = [...editableQuestion];
+      updated[index].questionImage = base64;
+      setEditableQuestion(updated);
+    });
+  };
 
-        };
-        console.log(quizData);
-        const saveQuiz = await axios.post("http://localhost:8000/assignQuiz", quizData, {
-            headers: {
-                "Content-Type" : "application/json",
-            },
-        })
-        alert(saveQuiz.data.message);
-    } catch(error){
-        console.error("Saving Error: ", error)
-    }  
-  }
+  const handleOptionImageUpload = (qIndex, oIndex, file) => {
+    convertToBase64(file, (base64) => {
+      const updated = [...editableQuestion];
+      updated[qIndex].options[oIndex].image = base64;
+      setEditableQuestion(updated);
+    });
+  };
+
+  const handleAssign = async () => {
+    try {
+      const quizData = {
+        lesson_id,
+        title,
+        description,
+        total_points,
+        instruction,
+        quiz_content: editableQuestion,
+        start_time,
+        duration,
+      };
+      console.log(quizData);
+
+      const saveQuiz = await axios.post("http://localhost:8000/assignQuiz", quizData, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      alert(saveQuiz.data.message);
+    } catch (error) {
+      console.error("Saving Error: ", error);
+    }
+  };
 
   const toggleEdit = () => {
     setIsEditing((prev) => !prev);
   };
 
   return (
-    <div className="flex justify-center  items-start min-h-screen overflow-y-auto">
+    <div className="flex justify-center items-start min-h-screen overflow-y-auto">
       <div className="w-full text-white rounded-2xl p-6 sm:p-10 max-h-[90vh]">
         <div className="flex justify-end gap-3">
           <button
@@ -72,8 +99,9 @@ export default function Questions({ questions = [], title, total_points, lesson_
           >
             {isEditing ? "Save" : "Edit"}
           </button>
-
-          <button onClick={handleAssign} className="text-[#333446]">Assign</button>
+          <button onClick={handleAssign} className="text-[#333446]">
+            Assign
+          </button>
         </div>
 
         <div className="text-2xl sm:text-3xl font-bold text-[#333446] mb-6 text-center">
@@ -81,57 +109,121 @@ export default function Questions({ questions = [], title, total_points, lesson_
         </div>
 
         {editableQuestion.map((q, index) => (
-  <div key={index} className="mb-8 p-4 border border-gray-200 rounded-xl">
-    {isEditing ? (
-      <input
-        type="text"
-        value={q.question}
-        onChange={(e) => handleQuestionChange(index, e.target.value)}
-        className="w-full text-lg p-3 mb-4 rounded bg-gray-100 text-black font-semibold"
-      />
-    ) : (
-      <p className="font-semibold text-lg mb-3">{q.question}</p>
-    )}
-
-    <ul className="space-y-2 text-white">
-      {q.options.map((opt, i) => (
-        <li key={i}>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name={`question-${index}`}
-              value={opt}
-              checked={q.answer === opt}
-              onChange={() => {
-                if (isEditing) {
-                  const updated = [...editableQuestion];
-                  updated[index].answer = opt;
-                  setEditableQuestion(updated);
-                }
-              }}
-              className="accent-[#424874]"
-              disabled={!isEditing}
-            />
+          <div
+            key={index}
+            className="mb-8 p-4 border border-gray-200 rounded-xl bg-[#424874]"
+          >
+            {/* Question text + image */}
             {isEditing ? (
-              <input
-                type="text"
-                value={opt}
-                onChange={(e) => handleOptionTextChange(index, i, e.target.value)}
-                className="text-black bg-gray-100 w-full rounded px-2 py-1"
-              />
+              <>
+                <input
+                  type="text"
+                  value={q.question}
+                  onChange={(e) => handleQuestionChange(index, e.target.value)}
+                  className="w-full text-lg p-3 mb-4 rounded bg-gray-100 text-black font-semibold"
+                  placeholder="Enter question"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    handleQuestionImageUpload(index, e.target.files[0])
+                  }
+                  className="mb-2"
+                />
+                {q.questionImage && (
+                  <img
+                    src={q.questionImage}
+                    alt="Question"
+                    className="max-w-xs rounded-lg mb-3 border"
+                  />
+                )}
+              </>
             ) : (
-              <span>{opt}</span>
+              <>
+                <p className="font-semibold text-lg mb-3">{q.question}</p>
+                {q.questionImage && (
+                  <img
+                    src={q.questionImage}
+                    alt="Question"
+                    className="max-w-xs rounded-lg mb-3 border"
+                  />
+                )}
+              </>
             )}
-          </label>
-        </li>
-      ))}
-      <p>✅ Correct Answer: {" "}
-        {q.answer || "N/A"}
-      </p>
-    </ul>
-  </div>
-))}
 
+            {/* Options */}
+            <ul className="space-y-2 text-white">
+              {q.options.map((opt, i) => (
+                <li key={i}>
+                  <label className="flex flex-col sm:flex-row items-start sm:items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`question-${index}`}
+                      value={opt.text}
+                      checked={q.answer === opt.text}
+                      onChange={() => {
+                        if (isEditing) {
+                          const updated = [...editableQuestion];
+                          updated[index].answer = opt.text;
+                          setEditableQuestion(updated);
+                        }
+                      }}
+                      className="accent-[#424874]"
+                      disabled={!isEditing}
+                    />
+                    {isEditing ? (
+                      <div className="flex flex-col w-full">
+                        <input
+                          type="text"
+                          value={opt.text}
+                          onChange={(e) =>
+                            handleOptionTextChange(index, i, e.target.value)
+                          }
+                          className="text-black bg-gray-100 rounded px-2 py-1 mb-1"
+                          placeholder="Option text"
+                        />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) =>
+                            handleOptionImageUpload(
+                              index,
+                              i,
+                              e.target.files[0]
+                            )
+                          }
+                        />
+                        {opt.image && (
+                          <img
+                            src={opt.image}
+                            alt="Option"
+                            className="max-w-[150px] mt-2 rounded border"
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        <span>{opt.text}</span>
+                        {opt.image && (
+                          <img
+                            src={opt.image}
+                            alt="Option"
+                            className="max-w-[150px] mt-2 rounded border"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </label>
+                </li>
+              ))}
+              <p>
+                ✅ Correct Answer:{" "}
+                <span className="font-semibold">{q.answer || "N/A"}</span>
+              </p>
+            </ul>
+          </div>
+        ))}
       </div>
     </div>
   );
