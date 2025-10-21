@@ -1,14 +1,12 @@
 import FileUploader from "../components/FileUploader"
 import UploadLesson from "./Lesson/UploadLesson"
-
+import LessonCard from "../components/LessonCard"
 export default function Dashboard() {
+
+  const lessonName = "Agile"
   return (
-    <main className="h-full w-full flex flex-col justify-center items-center">
-      <img 
-        src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg" 
-        alt="Sample"
-        className="h-[50%] w-[70%] object-cover rounded-lg"
-      />
-    </main>
+    <div className="w-full h-full">
+      <LessonCard lessonName={lessonName}/>
+    </div>
   )
 }

@@ -64,7 +64,7 @@ export default function UserManagement() {
     }, [query]);
 
 
-    // Styles fpr the modal
+    
 
     const panelStyleAdd = "w-full h-2/3 max-w-lg rounded-xl shadow-xl"
     const panelStyleDelete = "w-full h-1/3 max-w-lg rounded-xl shadow-xl"

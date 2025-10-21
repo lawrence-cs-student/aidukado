@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 from datetime import timedelta
 from sqlalchemy.orm import Session
-from app.models.user import Users
+from app.models.users import Users
 from app.schemas.user import UserCreate, UserResponse, UserLogin, TokenResponse
 from app.database import get_db
 from app.utils.auth import hash_password, verify_password

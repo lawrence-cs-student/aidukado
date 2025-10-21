@@ -2,12 +2,12 @@
 import { useState, useEffect } from "react"
 import axios from "axios";
 
-export default function EditClass({class_id, onClose, onSuccess}) {
+export default function EditClass({classId, onClose, onSuccess}) {
 
 
     const [formData, setFormData] = useState({
-        subject_id: "",
-        teacher_id: "",
+        subjectId: "",
+        teacherId: "",
         name: ""
     })
 
@@ -36,6 +36,7 @@ export default function EditClass({class_id, onClose, onSuccess}) {
         try{
             const response = await axios.get("http://localhost:8000/user/get_teachers")
             setTeachers(response.data)
+            
         } catch(err) {
             if(err.response?.data?.detail) {
                 setErrors(prev => ({ ...prev, teacherError: err.response.data.detail}))
@@ -65,11 +66,11 @@ export default function EditClass({class_id, onClose, onSuccess}) {
 
     const getClass = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/classes/getById/${class_id}`)
-
+            const response = await axios.get(`http://localhost:8000/classes/getById/${classId}`)
+            console.log(response.data)
             setFormData({
-                subject_id: response.data.subject_id,
-                teacher_id: response.data.teacher_id,
+                subjectId: response.data.subject.id,
+                teacherId: response.data.userTeacher.id,
                 name: response.data.name
             })
 
@@ -82,12 +83,18 @@ export default function EditClass({class_id, onClose, onSuccess}) {
 
 
     useEffect(() => {
-        if (class_id) {
-            getClass() 
-            getTeachers()
-            getSubjects()
-        }
-    }, [class_id])
+        const fetchAll = async () => {
+            try {
+            await Promise.all([getTeachers(), getSubjects()]);
+        
+            await getClass();
+            } catch (error) {
+            console.error("Error fetching data:", error);
+            }
+        };
+
+        if (classId) fetchAll();
+    }, [classId]);
 
 
     const handleChange = (e) => {
@@ -98,8 +105,8 @@ export default function EditClass({class_id, onClose, onSuccess}) {
     const validate = () => {
         const formErrors = {};
 
-        if (!formData.subject_id) formErrors.subject_id = "Subject Id is required!";
-        if (!formData.teacher_id) formErrors.teacher_id = "Teacher Id is required";
+        if (!formData.subjectId) formErrors.subjectId = "Subject Id is required!";
+        if (!formData.teacherId) formErrors.teacherId = "Teacher Id is required";
         if (!formData.name) formErrors.name = "Class Name is required"
 
 
@@ -117,14 +124,14 @@ export default function EditClass({class_id, onClose, onSuccess}) {
 
         try {
             setLoading(true);
-            const response = await axios.patch(`http://localhost:8000/classes/patch/${class_id}`, {
-                subject_id: formData.subject_id,
-                teacher_id: formData.teacher_id,
+            const response = await axios.patch(`http://localhost:8000/classes/patch/${classId}`, {
+                subject_id: formData.subjectId,
+                teacher_id: formData.teacherId,
                 name: formData.name
             })
 
             setSuccess(`Class with class id ${response.data.id} has been updated`);
-            setFetchError({});
+            setFetchError("");
 
             if (onSuccess) onSuccess();
 
@@ -154,7 +161,6 @@ export default function EditClass({class_id, onClose, onSuccess}) {
                 onSubmit={handleSubmit}
                 className="flex flex-col w-full h-full gap-[2%] text-left rounded-2xl"
             >
-
                 <label htmlFor="name" className={labelClass}>Class Name:</label>
                 <input
                     id="name"
@@ -168,26 +174,32 @@ export default function EditClass({class_id, onClose, onSuccess}) {
 
 
                 {errors && <span className="text-red-800">{errors.subjectError}</span>}
-                <label htmlFor="subject_id" className={labelClass}>Subject:</label>
-                <select id="subject_id" name="subject_id" value={formData.subject_id} onChange={handleChange} className="w-full h-[15%] bg-gray-700 rounded-md">
+                <label htmlFor="subjectId" className={labelClass}>Subject:</label>
+                <select id="subjectId" name="subjectId" value={formData.subjectId} onChange={handleChange} className="w-full h-[15%] bg-gray-700 rounded-md">
                     <option value="">select a subject</option>
                     {subjects.length > 0 ? (
                         subjects.map((subject) => <option value={subject.id} key={subject.id}>{subject.name}</option>)
                     ) : (<option disabled>Error fetching subjects</option>)}
                 </select>
-                {formError && <span className="text-red-800">{formError.subject_id}</span>}
+                {formError && <span className="text-red-800">{formError.subjectId}</span>}
 
                 {errors && <span className="text-red-800">{errors.teacherError}</span>}
-                <label htmlFor="teacher_id" className={labelClass}>Teacher:</label>
-                <select id="teacher_id" name="teacher_id" value={formData.teacher_id} onChange={handleChange} className="w-full h-[15%] bg-gray-700 rounded-md">
+                <label htmlFor="teacherId" className={labelClass}>Teacher:</label>
+                <select id="teacherId" name="teacherId" value={formData.teacherId} onChange={handleChange} className="w-full h-[15%] bg-gray-700 rounded-md">
                     <option value="">select a teacher</option>
                     {teachers.length > 0 ? (
-                        teachers.map((teacher) => <option value={teacher.id} key={teacher.id}>{teacher.first_name} {teacher.last_name}</option>)
-                    ) : (<option disabled>Error fetching teachers</option>)}
+                        teachers.map((teacher) => (
+                        <option value={teacher.id} key={teacher.id}>
+                            {teacher.firstName} {teacher.lastName}
+                        </option>
+                        ))
+                    ) : (
+                        <option disabled>Loading teachers...</option>
+                    )}
                 </select>
-                {formError && <span className="text-red-800">{formError.teacher_id}</span>}
 
-
+                {formError && <span className="text-red-800">{formError.teacherId}</span>}
+                
                 <div className="flex gap-2 mt-4">
                     <button 
                         className="w-1/2 mt-[1%] bg-[#EBEBEB] font-bold text-[#102E50] transition-transform duration-200 hover:scale-95 shadow-md"

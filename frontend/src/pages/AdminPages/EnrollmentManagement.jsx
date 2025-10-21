@@ -148,13 +148,14 @@ export default function EnrollmentManagement() {
       </div>
 
       <div className="w-1/2 flex flex-col justify-center items-center">
+        {success && <p className="text-green-800">{success}</p>}
         {fetchingError.studentError && (
           <p className="text-red-800">{fetchingError.studentError}</p>
         )}
         {fetchingError.classesError && (
           <p className="text-red-800">{fetchingError.classesError}</p>
         )}
-        {success && <p className="text-green-800">{success}</p>}
+        
         {!loading ? (
           <Table
             columns={enrollmentColumns}

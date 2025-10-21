@@ -98,7 +98,7 @@ def patch_enrollment(enrollment_id: int, enrollment_update: EnrollmentUpdate, db
 
 @router.delete("/delete/{enrollment_id}")
 def delete_enrollment(enrollment_id: int, db: Session = Depends(get_db)):
-    
+    print(1)
     delete_enrollment = db.query(ClassEnrollment).filter(ClassEnrollment.id == enrollment_id).first()
     
     if not delete_enrollment:

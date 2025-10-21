@@ -20,4 +20,6 @@ class Users(Base):
     classes_ = relationship("Classes", back_populates="user_teacher") 
     class_enrollments = relationship("ClassEnrollment", back_populates="student")
     activity_progress = relationship("StudentActivityProgress", back_populates="student")
-    quiz_progress = relationship("StudentQuizProgress", back_populates="student")
+    submissions = relationship("StudentSubmission", back_populates="student", cascade="all, delete")
+
+    # quiz_progress = relationship("StudentQuizProgress", back_populates="student")

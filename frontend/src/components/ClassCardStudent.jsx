@@ -3,16 +3,14 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import useClassStore from "../store/useClassStore";
 
-export default function ClassCard({ subjectName, classId}) {
+export default function ClassCardStudent({ subjectName, classId, teacher}) {
   const navigate = useNavigate();
 
-  const storeClassDetail = useClassStore((state) => state.storeClassDetail);
-
+  const storeClassId = useClassStore((state) => state.storeClassId)
 
   const handleClick = (e) => {
     e.preventDefault();
-    storeClassDetail(classId, subjectName);
-
+    storeClassId(classId);
     navigate(`/termPage`);
   }
 
@@ -31,6 +29,7 @@ export default function ClassCard({ subjectName, classId}) {
         <div className="flex flex-col w-full h-full rounded-2xl p-2 bg-[#102E50]">
           <div>
             <p className="text-xl sm:text-2xl font-bold text-white">{subjectName}</p> 
+            <p className="text-sm text-[#F5C45E]">{teacher}</p> 
           </div>
         </div>
     </div>

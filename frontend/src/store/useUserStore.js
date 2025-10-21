@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 const useUserStore = create((set) => ({
   userId: null,
-  userRole: "",
+  userRole: "teacher",
   
   storeUser: (id, role) => set({ userId: id, userRole: role }),
   clearUser: () => set({ userId: null, userRole: "" })

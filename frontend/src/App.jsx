@@ -20,8 +20,9 @@ import Settings from './pages/Settings';
 import StudentClasses from './pages/StudentClasses';
 import TeacherClasses from './pages/TeacherClasses';
 import SelectedClass from './pages/SelectedClass';
-import SelectedLesson from './pages/SelectedLesson';
+import SelectedLesson from './pages/Lesson/SelectedLesson';
 import TermPage from './pages/TermPage';
+import FileView from './pages/Lesson/FileView';
 
 function AppContent() {
   const location = useLocation();
@@ -81,8 +82,9 @@ function AppContent() {
 
 
           <Route path='/selectedClass/:classId/:term' element={<SelectedClass />}/>
-          <Route path='/selectedLesson' element={<SelectedLesson />} />
+          <Route path='/selectedLesson/:lessonId' element={<SelectedLesson />} />
           <Route path='/termPage' element={<TermPage />} />
+          <Route path='/fileView' element={<FileView />} />
           
           <Route path='/userManagement' element={<UserManagement/>}/>
           <Route path='/classManagement' element={<ClassManagement/>}/>

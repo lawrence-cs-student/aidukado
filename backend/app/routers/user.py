@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from app.models.user import Users
-from app.schemas.user import UserCreate, UserOut, UserUpdate
+from app.models import Users, ClassEnrollment
+from app.schemas.user import UserCreate, UserOut, UserUpdate, TeacherOut
 from app.database import SessionLocal
 from app.utils.auth import hash_password
 
@@ -44,7 +44,7 @@ def get_user_by_id(user_id: int , db: Session = Depends(get_db)):
         
     return user
 
-@router.get("/get_teachers", response_model=list[UserOut])
+@router.get("/get_teachers", response_model=list[TeacherOut])
 def get_all_teachers(db: Session = Depends(get_db)):
     teachers = db.query(Users).filter(Users.role == "teacher").all()
     
@@ -114,13 +114,22 @@ def patch_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_
     return {"message" : f"user with {user_id} updated successfully"}
 
 @router.delete("/delete/{user_id}")
-def delete_user(user_id : int, db: Session = Depends(get_db)):
+def delete_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(Users).filter(Users.id == user_id).first()
-    
+
     if not user:
-        raise HTTPException(status_code=404, detail="user not found")
-    
+        raise HTTPException(status_code=404, detail="User not found")
+
+
+    existing_enrollments = db.query(ClassEnrollment).filter_by(student_id=user_id).first()
+    if existing_enrollments:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot delete user: existing enrollments found."
+        )
+
     db.delete(user)
     db.commit()
-    return {"message" : f"user with {user_id} deleted successfully"}
+    return {"message": f"User with ID {user_id} deleted successfully"}
+
 

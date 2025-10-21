@@ -71,6 +71,11 @@ export default function Sidebar() {
           <h2 className="font-bold">Dashboard</h2>
         </NavLink>
 
+        <NavLink to="/teacherClasses" className={linkClasses}>
+          <MdAnalytics size={32} />
+          <h2 className="font-bold">My Classes</h2>
+        </NavLink>
+
         {userRole == "admin" && (
           <NavLink to="/userManagement" className={linkClasses}>
             <MdAccountCircle size={32} />

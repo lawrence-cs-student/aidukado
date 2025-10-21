@@ -6,7 +6,9 @@ import { Link, useParams } from "react-router-dom";
 import Modal from "../components/Modal";
 import UploadLesson from "./Lesson/UploadLesson";
 import LessonCard from "../components/LessonCard";
-import TermCard from "../components/TermCard";
+import { getTermName } from "../utils/getTermName";
+import useUserStore from "../store/useUserStore";
+import useClassStore from "../store/useClassStore";
 
 export default function SelectedSubject() {
     
@@ -14,54 +16,60 @@ export default function SelectedSubject() {
   const panelStyle = "w-full sm:h-[70%] max-w-lg rounded-xl shadow-xl"
   const [successMessage, setSuccessMessage] = useState("");
 
-//   const [lessons, setLessons] = useState([])
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage("");
+      }, 10000); 
 
-  const [fetchLessonsError, setFetchLessonsError] = useState("")
+      return () => clearTimeout(timer); 
+    }
+  }, [successMessage]);
+
+  const [materials, setMaterials] = useState([]);
+  
+
+  const [fetchMaterialsError, setFetchMaterialsError] = useState("");
+  
   
   const { classId, term } = useParams();
+  const userRole = useUserStore((state) => state.userRole);
+  const className = useClassStore((state) => state.className);
 
-//   const getLessons = async() => {
-//     try {
-//         const response = await axios.get(`http://localhost:8000/lessons/getById/${classId}`)
-//         setLessons(response.data)
-//     } catch(err) {
-//         if(err.response?.data?.detail) {
-//             setFetchLessonsError(err.response.data.detail)
-//         } else {
-//             setFetchLessonsError("Network Error")
-//          }
-//     }
-//   }
-
-  
-
-//   useEffect(() => {
-//     getLessons();
-//   } , [classId])
-
-  const lessons = [
-      { id: 1, name: "Intro to Programming", term: "Prelim" },
-      { id: 2, name: "Data Structures", term: "Prelim" },
-      { id: 3, name: "Algorithms", term: "Midterm" },
-      { id: 4, name: "Databases", term: "Final" },
-      { id: 5, name: "Operating Systems", term: "Final" },
-      { id: 6, name: "Operating Systems", term: "Prelim" },
-      { id: 7, name: "Databases", term: "Prelim" },
-      { id: 8, name: "Databases", term: "Prelim" },
-  ];
-
-  const filteredLessons = useMemo(() => {
-    return lessons.filter((lesson) => lesson.term === term) 
-  }, [lessons, term])
+  const getLessons = async() => {
+    try {
+        const response = await axios.get(`http://localhost:8000/class_material/getByClassId/${classId}`)
+        setMaterials(response.data)
+        console.log(response.data)
+    } catch(err) {
+        if(err.response?.data?.detail) {
+            setFetchMaterialsError(err.response.data.detail)
+        } else {
+            setFetchMaterialsError("Network Error")
+         }
+    }
+  }
 
   
+
+  useEffect(() => {
+    getLessons();
+  } , [classId])
+
+
+  const filteredMaterials = useMemo(() => {
+    return materials.filter((lesson) => lesson.termId === Number(term)) 
+  }, [materials, term])
+
+ 
+  let termName = getTermName(Number(term));
 
   return (
-    <div className="flex flex-col w-full h-full p-5 gap-5 items-center">
+    <div className="flex flex-col w-full h-full py-5 gap-5 items-center">
         <div
             className="
             flex flex-col
-            w-3/4 sm:w-[70%]
+            w-3/4 sm:w-[80%]
             min-h-[150px] 
             h-auto         
             p-2
@@ -74,44 +82,77 @@ export default function SelectedSubject() {
                 bg-[#102E50]/80 bg-[url('https://images.pexels.com/photos/895544/pexels-photo-895544.jpeg')] 
                 bg-cover bg-center bg-blend-overlay"
             >
-                <p className="text-xl sm:text-2xl font-bold text-white" >SUBJECT TITLE</p>
+                <p className="text-xl sm:text-2xl font-bold text-white" >{className}</p>
             </div>
             
         </div>
 
-        <div className="flex flex-row w-3/4 sm:w-[70%] mx-auto mt-4">
-            <button 
-              onClick={() => setIsOpen(true)} 
-              className="w-1/2 sm:w-[15%] shadow-xl rounded p-2 text-white font-bold bg-[#F5C45E] 
-              hover:bg-[#F4F6FF] hover:text-[#102E50] transition-transform duration-300" 
-            > 
-              Upload + 
-            </button>
-            {successMessage && (<p className="text-green-800">{successMessage}</p>)}
+        <div className="flex flex-row w-3/4 sm:w-[80%] gap-5 mx-auto mt-4">
+            {userRole == "teacher" && (
+              <>
+                <button 
+                  onClick={() => setIsOpen(true)} 
+                  className="w-1/2 sm:w-[15%] shadow-xl rounded p-2 text-white font-bold bg-[#102E50] 
+                  hover:bg-[#F4F6FF] hover:text-[#102E50] transition-transform duration-300" 
+                > 
+                  Create + 
+                </button>
+                
+                {successMessage && (<p className="text-green-800 self-end">{successMessage}</p>)}
+              </>
+            )}
         </div>
 
-        <div className="w-3/4 sm:w-[70%] mt-10">
-          <h2 className="text-[#F5C45E] font-bold text-2xl">{term}'s Lessons</h2>
+        <div className="w-4/5 sm:w-[80%] mt-10">
+          <h2 className="text-[#F5C45E] font-bold text-2xl">{termName}'s Materials</h2>
         </div>
         
-        <div className="flex flex-wrap gap-2 space-between w-3/4 sm:w-[70%]">
-            {filteredLessons.map((lesson) => (
-                <LessonCard key={lesson.id} lessonName={lesson.name}/>
-            ))}
+        <div className="flex flex-wrap justify-between w-3/4 sm:w-[80%]">
+          {filteredMaterials.length > 0 ? (
+            filteredMaterials.map((lesson) => (
+              <LessonCard 
+                key={lesson.id} 
+                materialName={lesson.title} 
+                materialId={lesson.id} 
+                creationDate ={lesson.createdAt}
+                materialType ={lesson.type}
+              />
+            ))
+          ) : (
+            <div className="text-gray-500 text-center w-full py-6">
+              No lessons available for this term yet. {filteredMaterials[0]}
+            </div>
+          )}
         </div>
         
+        <div className="w-3/4 sm:w-[80%] mt-10">
+          <h2 className="text-[#F5C45E] font-bold text-2xl">{termName}'s Quizzes</h2>
+        </div>
 
-        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Upload a Lesson" panelStyle={panelStyle}>
+        
+        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Upload a Material" panelStyle={panelStyle}>
             <UploadLesson 
               setSuccessMessage={setSuccessMessage}
               setIsOpen={setIsOpen} 
               term={term}
               onSuccess={() => {
-                // getLessons();
+                getLessons();
                 setIsOpen(false);
               }}
             />
         </Modal>
+
+        {/* <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Upload a Lesson" panelStyle={panelStyle}>
+            <UploadLesson 
+              setSuccessMessage={setSuccessMessage}
+              setIsOpen={setIsOpen} 
+              term={term}
+              onSuccess={() => {
+                getLessons();
+                setIsOpen(false);
+              }}
+            />
+        </Modal> */}
     </div>
   );
 }

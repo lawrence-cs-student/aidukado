@@ -8,10 +8,10 @@ class StudentActivityProgress(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    activity_id = Column(Integer, ForeignKey("activities.id", ondelete="CASCADE"), nullable=False)
+    activity_id = Column(Integer, ForeignKey("class_materials.id", ondelete="CASCADE"), nullable=False)
     status = Column(String(50), nullable=False)
     score = Column(Integer, nullable=True)
 
     # Relationships
     student = relationship("Users", back_populates="activity_progress")
-    activity = relationship("Activity", back_populates="student_progress")
+    material = relationship("ClassMaterial", back_populates="student_progress")

@@ -1,7 +1,8 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
-from app.utils import to_camel   
+from app.utils.to_camel import to_camel   
 from app.schemas.user import TeacherOut
+from app.schemas.subject import SubjectOut
 
 class ClassCreate(BaseModel):
     subject_id: int
@@ -27,9 +28,9 @@ class ClassUpdate(BaseModel):
 
 class ClassOut(BaseModel):
     id: int
-    subject_id: int
-    teacher_id: int
     name: str
+    subject: SubjectOut
+    user_teacher: TeacherOut
 
     model_config = ConfigDict(
         from_attributes=True,

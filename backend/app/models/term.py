@@ -10,5 +10,5 @@ class Term(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), unique=True, nullable=False)
     
-    lessons = relationship("Lesson", back_populates="term")
+    materials = relationship("ClassMaterial", back_populates="term")
     

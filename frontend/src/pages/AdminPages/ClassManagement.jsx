@@ -13,10 +13,10 @@ import { MoonLoader } from "react-spinners";
 export default function ClassManagement() {
 
     const classesColumns = [
-        {id: 1, name: "ID", key: "id"},
-        {id: 2, name: "Name", key: "name"},
-        {id: 3, name: "Subject Name", key: "subject_id"},
-        {id: 4, name: "Teacher Name", key: "teacher_id"}
+        { id: 1, name: "ID", key: "id" },
+        { id: 2, name: "Name", key: "name" },
+        { id: 3, name: "Subject Name", key: "subjectName" },
+        { id: 4, name: "Teacher Name", key: "teacherName" },
     ];
 
 
@@ -37,7 +37,13 @@ export default function ClassManagement() {
             const response = await axios.get("http://localhost:8000/classes/get", {
                 params : query.trim() !== "" ? {query} : {}
             })
-            setClassesData(response.data);
+            console.log(response.data);
+            const formatted = response.data.map((cls) => ({
+                ...cls,
+                subjectName: cls.subject?.name || "—",
+                teacherName: cls.userTeacher ? `${cls.userTeacher.firstName} ${cls.userTeacher.lastName}` : "—",
+            }));
+            setClassesData(formatted);
         } catch(err) {
             if (err.response?.data?.detail) {
                 setError(err.response.data.detail)
@@ -98,7 +104,7 @@ export default function ClassManagement() {
             {/* Edit */}
             <Modal isOpen={isOpenEditModal} onClose={() => setIsOpenEditModal(false)} title="Edit Class" panelStyle={panelStyleEdit}>
                 <EditClass
-                    class_id={selectedClassData?.id}
+                    classId={selectedClassData?.id}
                     onClose={() => setIsOpenEditModal(false)}
                     onSuccess={() => {
                         getClasses();

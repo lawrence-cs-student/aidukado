@@ -5,9 +5,10 @@ export default function DeleteEnrollment({enrollmentId, setSuccess, onClose, onS
 
     const [deleteError, setDeleteError] = useState("");
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const response = await axios.delete(`http://localhost:8000/${enrollmentId}`)
+            const response = await axios.delete(`http://localhost:8000/enrollment/delete/${enrollmentId}`)
             setSuccess(response.data.message);
 
             if (onSuccess) onSuccess();

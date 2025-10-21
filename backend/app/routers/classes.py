@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 from app.database import SessionLocal
 from app.models.classes import Classes
+from app.models.subject import Subject
 from app.schemas.classes import ClassCreate, ClassUpdate, ClassOut, ClassWithTeacherOut
 
 router = APIRouter(prefix="/classes", tags=["classes"])
@@ -19,13 +20,30 @@ def get_db():
 @router.get("/get", response_model=list[ClassOut])
 def get_classes(query: str | None = None, db: Session = Depends(get_db)):
     
-    classes = db.query(Classes)
+    classes = (
+        db.query(Classes)
+        .options(
+            joinedload(Classes.subject),
+            joinedload(Classes.user_teacher)
+        )
+    )
     
     if query:
-        classes = classes.filter(Classes.name.ilike(f"%{query}%"))
+        classes = (
+            classes
+            .join(Classes.subject)
+            .join(Classes.user_teacher)
+            .filter(
+            or_(
+                Classes.name.ilike(f"%{query}%"),
+                Subject.name.ilike(f"%{query}%")
+            )
+        )
+            )
 
     classes = classes.order_by(Classes.id.asc()).all()
 
+   
     return classes
 
 @router.get("/getById/{class_id}", response_model=ClassOut)

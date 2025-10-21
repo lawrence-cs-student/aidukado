@@ -1,11 +1,11 @@
 from pydantic import BaseModel, ConfigDict
-from app.utils import to_camel
+from app.utils.to_camel import to_camel
 
-class LessonCreate(BaseModel):
-    class_id: int
-    term_id: int
-    title: str
-    description: str
+
+class SubmissionCreate:
+    material_id: int
+    student_id: int
+    type: str
     
     model_config = ConfigDict(
         from_attributes=True,

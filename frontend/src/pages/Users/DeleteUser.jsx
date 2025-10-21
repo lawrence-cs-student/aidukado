@@ -1,7 +1,9 @@
 import axios from "axios";
-
+import { useState } from "react";
 
 export default function DeleteUser({ userId, onClose, onSuccess}) {
+
+    const [deleteError, setDeleteError] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -9,13 +11,18 @@ export default function DeleteUser({ userId, onClose, onSuccess}) {
             await axios.delete(`http://localhost:8000/user/delete/${userId}`, )
             if(onSuccess) onSuccess();
         } catch (err) {
-            console.error("Error Deleting User", err)
+            if (err.response?.data?.detail) {
+                setDeleteError(err.response.data.detail)
+            } else {
+                setDeleteError("Network Error")
+            }
         }
     }
 
 
     return (
         <div className="w-full h-full flex flex-col justify-center items-center bg-white p-[4%] shadow-xl">
+            {deleteError && (<p className="text-red-800">{deleteError}</p>)}
             <form
                 onSubmit={handleSubmit}
                 className="flex flex-col w-2/3 h-1/2 gap-[2%] text-left rounded-2xl"

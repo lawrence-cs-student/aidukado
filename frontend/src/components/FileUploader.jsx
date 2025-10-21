@@ -1,7 +1,5 @@
 
 
-
-
 export default function FileUploader({type, handleFileChange}) {
   return (
     <div className="w-full mx-auto p-6 border-2 border-dashed rounded-lg bg-gray-50">

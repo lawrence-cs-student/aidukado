@@ -4,7 +4,6 @@ from app.config import DATABASE_URL
 import os
 
 
-print("DATABASE_URL =", DATABASE_URL)
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
