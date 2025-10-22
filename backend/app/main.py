@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 #from .routers.upload import teacher_router
 from .routers.upload import router
-import app.models  
+ 
 from .routers import (
     post_test,
     auth,
@@ -15,6 +15,7 @@ from .routers import (
     score,
     summary
     # lesson
+    
 )
 
 from fastapi.middleware.cors import CORSMiddleware

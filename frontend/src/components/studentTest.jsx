@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/useUserStore";
@@ -13,24 +13,36 @@ export default function StudentTest() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
 
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const maxAllowedSwitches = 3;
+
+  const optionLetters = "ABCD".split("");
+
+  const quizRef = useRef(null);
+  const userAnswersRef = useRef({});
   const [lessonId, setLessonId] = useState(2);
 
-  // Fetch quiz and calculate remaining time
+  //----------Store User Answer -------
+  useEffect(() => {
+    userAnswersRef.current = userAnswers;
+  }, [userAnswers]);
+
+  // ---------------- FETCH QUIZ ----------------
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/getQuiz/${lessonId}`);
         setQuiz(res.data);
+        quizRef.current = res.data;
 
         const startTime = new Date(res.data.start_time);
-        const durationMinutes = res.data.duration || 10; // fallback 10 minutes
+        const durationMinutes = res.data.duration || 10;
         const endTime = new Date(startTime.getTime() + durationMinutes * 60000);
         const remaining = Math.max(0, endTime - new Date());
         setTimeLeft(remaining);
 
-        // Auto-submit immediately if time is already up
         if (remaining <= 0) {
-          handleSubmit(true, res.data.quiz_content);
+          handleSubmit(res.data, res.data.quiz_content);
         }
       } catch (error) {
         console.error("Error fetching quiz:", error);
@@ -39,7 +51,32 @@ export default function StudentTest() {
     fetchQuiz();
   }, [lessonId]);
 
-  // Countdown timer
+  // ---------------- TAB SWITCH HANDLER ----------------
+  const handleVisibilityChange = useCallback(() => {
+    if (document.hidden && !submitted) {
+      setTabSwitchCount((prevCount) => {
+        const newCount = prevCount + 1;
+
+        if (newCount < maxAllowedSwitches) {
+          alert(`⚠️ You switched tabs! (${newCount}/${maxAllowedSwitches})`);
+        } else if (newCount === maxAllowedSwitches) {
+          alert("🚫 You switched tabs too many times. Your quiz will now be submitted.");
+          handleSubmit(quizRef.current, quizRef.current.quiz_content);
+        }
+
+        return newCount;
+      });
+    }
+  }, [submitted]);
+
+  
+
+  useEffect(() => {
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [handleVisibilityChange]);
+
+  // ---------------- COUNTDOWN TIMER ----------------
   useEffect(() => {
     if (submitted || timeLeft <= 0) return;
 
@@ -47,7 +84,7 @@ export default function StudentTest() {
       setTimeLeft((prev) => {
         if (prev <= 1000) {
           clearInterval(interval);
-          handleSubmit(true); // auto-submit
+          handleSubmit();
           return 0;
         }
         return prev - 1000;
@@ -57,6 +94,7 @@ export default function StudentTest() {
     return () => clearInterval(interval);
   }, [submitted, timeLeft]);
 
+  // ---------------- HANDLE ANSWER CHANGE ----------------
   const handleOptionChange = (qIndex, selectedText) => {
     setUserAnswers((prev) => ({
       ...prev,
@@ -64,31 +102,38 @@ export default function StudentTest() {
     }));
   };
 
-  const handleSubmit = async (auto = false, quizContent = quiz.quiz_content) => {
-    let totalScore = 0;
+  // ---------------- HANDLE QUIZ SUBMISSION ----------------
+  const handleSubmit = async (quizData = quizRef.current, quizContent = quizRef.current?.quiz_content) => {
+    if (submitted) return; // prevent double submission
 
+    let totalScore = 0;
     quizContent.forEach((q, index) => {
       const correctAnswer = q.answer?.trim();
-      const studentAnswer = userAnswers[index] || ""; // empty string counts as wrong
+      const studentAnswer = userAnswersRef.current[index] || "";
+      console.log(studentAnswer);
       if (studentAnswer === correctAnswer) totalScore++;
     });
 
     setScore(totalScore);
     setSubmitted(true);
 
+    const saveScore = {
+      student_id,
+      test_type: quizData.title,
+      test_id: quizData.id,
+      score: totalScore,
+    };
+
+    console.log("Saving to database:", saveScore);
+
     try {
-      await axios.post("http://localhost:8000/saveScore", {
-        student_id,
-        test_type: quiz.title,
-        test_id: quiz.id,
-        score: totalScore,
-        auto_submit: auto,
-      });
+      await axios.post("http://localhost:8000/saveScore", saveScore);
     } catch (error) {
       console.error("Error saving score:", error);
     }
   };
 
+  // ---------------- FORMAT TIME ----------------
   const formatTime = (ms) => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -96,6 +141,7 @@ export default function StudentTest() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  // ---------------- RENDER ----------------
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
       <div className="w-full max-w-4xl bg-white text-black rounded-2xl shadow-xl p-8 sm:p-10 overflow-y-auto max-h-[90vh]">
@@ -130,9 +176,9 @@ export default function StudentTest() {
                       <input
                         type="radio"
                         name={`question-${index}`}
-                        value={opt.text}
-                        checked={studentAnswer === opt.text}
-                        onChange={() => handleOptionChange(index, opt.text)}
+                        value={optionLetters[i]}
+                        checked={studentAnswer === optionLetters[i]}
+                        onChange={() => handleOptionChange(index, optionLetters[i])}
                         disabled={submitted}
                         className="accent-[#424874]"
                       />
@@ -165,7 +211,7 @@ export default function StudentTest() {
         {!submitted && (
           <div className="flex justify-center mt-6">
             <button
-              onClick={() => handleSubmit(false)}
+              onClick={() => handleSubmit()}
               className="px-8 py-3 bg-[#424874] text-white font-semibold rounded-lg hover:bg-[#2f355d] transition"
             >
               Submit Answers

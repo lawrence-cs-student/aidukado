@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function Questions({
-  questions = [],
-  title,
-  total_points,
-  lesson_id,
-  description,
-  instruction,
-  duration,
-  start_time,
+export default function Questions({ questions = [], title, total_points, lesson_id, description, instruction, duration, start_time,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editableQuestion, setEditableQuestion] = useState([]);
+
+  // Option letters (A, B, C, D, etc.)
+  const optionLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   useEffect(() => {
     // Normalize structure (ensures options are always objects)
@@ -92,22 +87,25 @@ export default function Questions({
   return (
     <div className="flex justify-center items-start min-h-screen overflow-y-auto">
       <div className="w-full text-white rounded-2xl p-6 sm:p-10 max-h-[90vh]">
-        <div className="flex justify-end gap-3">
+        {/* Action buttons */}
+        <div className="flex justify-end gap-3 mb-6">
           <button
             onClick={toggleEdit}
             className="text-[#333446] bg-white px-4 py-2 rounded-md hover:bg-gray-200"
           >
             {isEditing ? "Save" : "Edit"}
           </button>
-          <button onClick={handleAssign} className="text-[#333446]">
+          <button onClick={handleAssign} className="text-[#333446] bg-white px-4 py-2 rounded-md hover:bg-gray-200">
             Assign
           </button>
         </div>
 
-        <div className="text-2xl sm:text-3xl font-bold text-[#333446] mb-6 text-center">
-          <p className="text-white">{title}</p>
+        {/* Quiz Title */}
+        <div className="text-2xl sm:text-3xl font-bold text-center mb-6 text-white">
+          {title}
         </div>
 
+        {/* Questions */}
         {editableQuestion.map((q, index) => (
           <div
             key={index}
@@ -155,23 +153,27 @@ export default function Questions({
             {/* Options */}
             <ul className="space-y-2 text-white">
               {q.options.map((opt, i) => (
-                <li key={i}>
+                <li key={i} className="flex items-start gap-3">
                   <label className="flex flex-col sm:flex-row items-start sm:items-center gap-2 cursor-pointer">
+                    {/* Option Letter */}
+                    
                     <input
                       type="radio"
                       name={`question-${index}`}
-                      value={opt.text}
-                      checked={q.answer === opt.text}
+                      value={optionLetters[i]}
+                      checked={q.answer === optionLetters[i]}
                       onChange={() => {
                         if (isEditing) {
                           const updated = [...editableQuestion];
-                          updated[index].answer = opt.text;
+                          updated[index].answer = optionLetters[i]; // Save letter
                           setEditableQuestion(updated);
                         }
                       }}
                       className="accent-[#424874]"
                       disabled={!isEditing}
                     />
+
+                    {/* Option Text or Image */}
                     {isEditing ? (
                       <div className="flex flex-col w-full">
                         <input
@@ -187,11 +189,7 @@ export default function Questions({
                           type="file"
                           accept="image/*"
                           onChange={(e) =>
-                            handleOptionImageUpload(
-                              index,
-                              i,
-                              e.target.files[0]
-                            )
+                            handleOptionImageUpload(index, i, e.target.files[0])
                           }
                         />
                         {opt.image && (
@@ -204,7 +202,7 @@ export default function Questions({
                       </div>
                     ) : (
                       <div>
-                        <span>{opt.text}</span>
+                        {opt.text && <span>{opt.text}</span>}
                         {opt.image && (
                           <img
                             src={opt.image}
@@ -217,11 +215,13 @@ export default function Questions({
                   </label>
                 </li>
               ))}
-              <p>
-                ✅ Correct Answer:{" "}
-                <span className="font-semibold">{q.answer || "N/A"}</span>
-              </p>
             </ul>
+
+            {/* Correct Answer */}
+            <p className="mt-2">
+              ✅ Correct Answer:{" "}
+              <span className="font-semibold">{q.answer || "N/A"}</span>
+            </p>
           </div>
         ))}
       </div>
