@@ -8,8 +8,8 @@ export default function LessonCard ({materialName, materialId, creationDate, mat
     const date = new Date(creationDate);
 
     const formattedDate = date.toLocaleDateString("en-US", {
-    month: "long",  // "October"
-    day: "numeric", // "16"
+    month: "long",  
+    day: "numeric", 
     
     });
 
@@ -17,7 +17,6 @@ export default function LessonCard ({materialName, materialId, creationDate, mat
     const navigate = useNavigate();
     
     const handleClick = () => {
-
         navigate(`/selectedLesson/${materialId}`)
     }
 

@@ -6,11 +6,12 @@ import useClassStore from "../store/useClassStore";
 export default function ClassCardStudent({ subjectName, classId, teacher}) {
   const navigate = useNavigate();
 
-  const storeClassId = useClassStore((state) => state.storeClassId)
+  const storeClassDetail = useClassStore((state) => state.storeClassDetail);
 
   const handleClick = (e) => {
     e.preventDefault();
-    storeClassId(classId);
+    storeClassDetail(classId, subjectName);
+
     navigate(`/termPage`);
   }
 

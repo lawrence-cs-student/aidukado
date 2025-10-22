@@ -2,13 +2,13 @@
 import { useEffect, useState } from "react"
 import axios from 'axios'
 import ClassCard from "../components/ClassCard";
-// import useUserStore from "../store/useUserStore.js";
+import useUserStore from "../store/useUserStore.js";
 
 export default function StudentClasses() {
 
-  // const teacherId = useUserStore((state) => state.userId)
+  const teacherId = useUserStore((state) => state.userId)
 
-  const teacherId = 5;
+  // const teacherId = 5;
 
   
 

@@ -48,6 +48,7 @@ export default function SelectedLesson() {
     const description = lesson?.description || "";
     const fileKey = lesson?.fileKey || "";
     const fileExtension = fileKey.split(".").pop().toLowerCase();
+    const lessonType = lesson?.type || "";
     
 
     return (
@@ -57,22 +58,26 @@ export default function SelectedLesson() {
                     <MdClose size={24} className="text-white font-bold m-auto" />
                 </div>
             )}
-            {/* <LessonViewer 
-                fileExtension={fileExtension}
-                fileUrl={fileUrl}
-                title={title}
-                description={description}
-                setIsVisible={setIsVisible}
-                isVisible={isVisible}
-            /> */}
-            <TaskViewer 
-                fileExtension={fileExtension}
-                fileUrl={fileUrl}
-                title={title}
-                description={description}
-                setIsVisible={setIsVisible}
-                isVisible={isVisible}
-            />
+            {lessonType == "lesson" && (
+                <LessonViewer 
+                    fileExtension={fileExtension}
+                    fileUrl={fileUrl}
+                    title={title}
+                    description={description}
+                    setIsVisible={setIsVisible}
+                    isVisible={isVisible}
+                />
+            )}
+            {lessonType != "lesson" && (
+                <TaskViewer 
+                    fileExtension={fileExtension}
+                    fileUrl={fileUrl}
+                    title={title}
+                    description={description}
+                    setIsVisible={setIsVisible}
+                    isVisible={isVisible}
+                />
+            )}
             
         </div>
     )

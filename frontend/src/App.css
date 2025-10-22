@@ -7,12 +7,11 @@ html, body, #root {
 
 
 .image-background {
-  --bg-image: url("https://images.pexels.com/photos/620337/pexels-photo-620337.jpeg");
-  --bg-image-opacity: .05;
-  background-color: #110B1D;
+  --bg-image: url("https://images.pexels.com/photos/82256/pexels-photo-82256.jpeg");
+  --bg-image-opacity: .15;
+  background-color: #102E50;
   position: relative;
   isolation: isolate;
-  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -22,7 +21,6 @@ html, body, #root {
   position: absolute;
   inset: 0;
   z-index: -1;
-  width: 100%;
   background-repeat: no-repeat;
   background-size: cover;
   background-image: var(--bg-image);
@@ -52,3 +50,15 @@ html, body, #root {
   opacity: var(--bg-image-opacity);
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float {
+  animation: float 2s ease-in-out infinite;
+}

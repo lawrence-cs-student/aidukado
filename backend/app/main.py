@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from .routers.upload import teacher_router
 import app.models  
 from .routers import (
@@ -13,8 +13,23 @@ from .routers import (
 )
 
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
+
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+
+@app.middleware("http")
+@limiter.limit("100/hour")  # Each IP can only send 100 requests per hour
+async def global_rate_limit(request: Request, call_next):
+    return await call_next(request)
 
 app.add_middleware(
     CORSMiddleware,

@@ -82,47 +82,62 @@ export default function Login() {
     }
 
     return (
-        <div className="bg-[#333446] flex h-full w-full flex flex-col side-background">
+        <div className="bg-[#333446] flex h-full w-full flex">
             
             {success && <p className="text-green-800">{success}</p>}
             
             <div className="flex h-full w-[60%] bg-white justify-center items-center flex-col">
                 <form 
                     onSubmit={handleSubmit}
-                    className="bg-transparent h-[50%] w-[40%] flex justify-center flex-col gap-2 rounded-3xl p-[4%] border-2 border-[#7F8CAA] "
+                    className="bg-transparent backdrop-blur-md h-[60%] w-[50%] flex justify-center flex-col gap-2 rounded-3xl p-4"
                 >
-                    <h2 className="text-3xl font-bold text-[#333446] self-center mb-4">Login</h2>
+                    <h2 className="w-full text-[50px] font-extrabold text-[#102E50] self-center mb-1">WELCOME BACK TO AIDUKADO</h2>
+                    <p2 className="w-full text-[#102E50] text-md mb-4">Aidukado is an AI-driven LMS that enhances learning through smart content generation and automation.</p2>
 
-                    <label className="block font-medium mb-1 text-[#7F8CAA]">Email:</label>
+                    <label className="block font-medium mb-1 text-[#102E50] text-xl w-full">Email:</label>
                     <input 
                         onChange={handleChange}
                         type="text"
                         name="email"
                         value={formData.email}
-                        className="bg-transparent border-2 rounded-md w-[95%] h-[10%] p-1 text-[#7F8CAA]" 
+                        className="bg-transparent border-2 rounded-md w-full h-[10%] p-1 text-[#102E50] mb-4" 
                         placeholder="Email"
                     />
 
-                    <label className="block font-medium mb-1 text-[#7F8CAA]">Password:</label>
+                    <label className="block font-medium mb-1 text-[#102E50] text-xl w-full">Password:</label>
                     <input 
                         onChange={handleChange}
                         type="password"
                         name="password"
                         value={formData.password}
-                        className="bg-transparent border-2 rounded-md w-[95%] h-[10%] p-1 text-[#7F8CAA]" 
+                        className="w-full bg-transparent border-2 rounded-md h-[10%] p-1 text-[#102E50] mb-4" 
                         placeholder="Password"
 
                     />
-                    
+                    <a>Forgot Password?</a>
                     <button 
                         disabled={loading} 
-                        className={`w-[95%] h-[10%] mt-2 p-1 bg-[#333446] ${loading && "opacity-50"}`}
+                        className={`w-[40%] h-[10%] mt-2 p-1 bg-[#102E50] ${loading && "opacity-50"} rounded-md`}
                     >
                         {loading ? "Logging in..." : "Login"}
                     </button>
 
                     {errors.api && <p className="text-red-800">{errors.api}</p>}
                 </form>
+            </div>
+            <div className="w-[40%] h-full image-background">
+                 <img
+                    className="w-1/2] h-[25%] object-contain rounded-b-lg m-auto shadow-lg float hidden md:block absolute right-[10%] top-[15%]"
+                    src="/bookLogin.png"
+                    alt="Lesson Preview"
+                />
+                <img
+                    className="w-1/2 h-1/2 object-contain rounded-b-lg m-auto float hidden md:block absolute right-[50%] top-[35%]"
+                    src="/bot.png"
+                    alt="Lesson Preview"
+                />
+            
+               
             </div>
         </div>
     )

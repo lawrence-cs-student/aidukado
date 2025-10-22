@@ -41,7 +41,7 @@ export default function StudentClasses() {
                         ? `${cls.enrolledClass.userTeacher.firstName} ${cls.enrolledClass.userTeacher.lastName}`
                         : "Unknown Teacher"
                     }
-                    classId={cls.id}
+                    classId={cls.enrolledClass.id}
                   />
               ))}
             </div>
