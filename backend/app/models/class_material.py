@@ -26,5 +26,5 @@ class ClassMaterial(Base):
     submissions = relationship("StudentSubmission", back_populates="material", cascade="all, delete")
 
     # activities = relationship("Activity", back_populates="lesson", cascade="all, delete")
-    # quizzes = relationship("Quiz", back_populates="lesson", cascade="all, delete")
+    quizzes = relationship("Quiz", back_populates="material", cascade="all, delete")
     

@@ -2,7 +2,7 @@
 import { useNavigate} from "react-router-dom"
 import { MdMenuBook, MdAssignment, MdTaskAlt, MdWorkOutline } from "react-icons/md";
 
-export default function LessonCard ({materialName, materialId, creationDate, materialType}) {
+export default function LessonCard ({materialName, materialId, creationDate, materialType, classId}) {
 
     
     const date = new Date(creationDate);
@@ -17,7 +17,7 @@ export default function LessonCard ({materialName, materialId, creationDate, mat
     const navigate = useNavigate();
     
     const handleClick = () => {
-        navigate(`/selectedLesson/${materialId}`)
+        navigate(`/selectedLesson/${materialId}/${classId}`)
     }
 
     const iconStyle = "text-[#102E50] m-auto"

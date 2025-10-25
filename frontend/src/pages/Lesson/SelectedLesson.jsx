@@ -11,7 +11,7 @@ import TaskViewer from "../../components/TaskViewer";
 
 export default function SelectedLesson() {
 
-    const {lessonId} = useParams();
+    const {lessonId, classId} = useParams();
 
     const [lesson, setLesson] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
@@ -66,6 +66,8 @@ export default function SelectedLesson() {
                     description={description}
                     setIsVisible={setIsVisible}
                     isVisible={isVisible}
+                    lessonId={lessonId}
+                    classId={classId}
                 />
             )}
             {lessonType != "lesson" && (
@@ -76,6 +78,7 @@ export default function SelectedLesson() {
                     description={description}
                     setIsVisible={setIsVisible}
                     isVisible={isVisible}
+                    
                 />
             )}
             

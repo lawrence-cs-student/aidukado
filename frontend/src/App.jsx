@@ -24,6 +24,10 @@ import SelectedLesson from './pages/Lesson/SelectedLesson';
 import TermPage from './pages/TermPage';
 import FileView from './pages/Lesson/FileView';
 
+import CreateQuiz from './components/CreateQuiz';
+import StudentQuizPage from './components/StudentQuizPage';
+import LessonSummary from './components/LessonSummary';
+
 function AppContent() {
   const location = useLocation();
   const hideSidebar = location.pathname === "/login" || location.pathname === "/signup";
@@ -82,9 +86,14 @@ function AppContent() {
 
 
           <Route path='/selectedClass/:classId/:term' element={<SelectedClass />}/>
-          <Route path='/selectedLesson/:lessonId' element={<SelectedLesson />} />
+          <Route path='/selectedLesson/:lessonId/:classId' element={<SelectedLesson />} />
           <Route path='/termPage' element={<TermPage />} />
           <Route path='/fileView' element={<FileView />} />
+
+          <Route path='/createQuiz/:classId/:lessonId' element={<CreateQuiz />} />
+          <Route path='/studentQuizPage/:quizId' element={<StudentQuizPage />} />
+          <Route path='/lessonSummary/:lessonId' element={<LessonSummary />} />
+          
           
           <Route path='/userManagement' element={<UserManagement/>}/>
           <Route path='/classManagement' element={<ClassManagement/>}/>

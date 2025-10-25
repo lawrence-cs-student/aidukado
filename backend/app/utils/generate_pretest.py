@@ -6,27 +6,35 @@ genai.configure(api_key = "AIzaSyDKQ6uASlEbzeilq8z6TanbL-PKKSxh4yM")
 
 model = genai.GenerativeModel("gemini-2.0-flash")
 
-def generate_pretest(content: str):
-    prompt = f""" 
-        Based on the content below, generate a 5-question multiple choice with 4 options each and indicate the right answer
-        
+def generate_pretest(lesson_content, num_items, question_type):
+    prompt = f"""
+        Based on the content below, generate a {num_items}-question {question_type} quiz. 
+
         Content:
-        \"\"\"{content}\"\"\"
-        
-        Format Your Response like these:
-        
+        \"\"\"{lesson_content}\"\"\"
+
+        Format your response like this (for multiple choice):
+
         1. Question ...
-        
+
             A. Option
             B. Option
             C. Option
             D. Option
-            
+
         Answer: B
-        
-        Begin: 
-        
-    """
+
+        If the question type is True/False, format like this:
+
+        1. Question ...
+
+            A. True
+            B. False
+
+        Answer: True
+
+        Begin:
+        """
     
     response = model.generate_content(prompt)
     raw_questions =  response.text

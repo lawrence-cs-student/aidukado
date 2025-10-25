@@ -6,11 +6,9 @@ import useUserStore from "../store/useUserStore.js";
 
 export default function StudentClasses() {
 
-  const teacherId = useUserStore((state) => state.userId)
+  //const teacherId = useUserStore((state) => state.userId)
 
-  // const teacherId = 5;
-
-  
+  const teacherId = 5;
 
   const [classes, setClasses] = useState([])
   

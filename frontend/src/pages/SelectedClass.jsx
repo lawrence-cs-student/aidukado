@@ -9,6 +9,7 @@ import LessonCard from "../components/LessonCard";
 import { getTermName } from "../utils/getTermName";
 import useUserStore from "../store/useUserStore";
 import useClassStore from "../store/useClassStore";
+import QuizCard from "../components/QuizCard";
 
 export default function SelectedSubject() {
     
@@ -30,7 +31,8 @@ export default function SelectedSubject() {
   
 
   const [fetchMaterialsError, setFetchMaterialsError] = useState("");
-  
+
+  const [quiz, setQuiz] = useState([])
   
   const { classId, term } = useParams();
   const userRole = useUserStore((state) => state.userRole);
@@ -47,14 +49,27 @@ export default function SelectedSubject() {
         } else {
             setFetchMaterialsError("Network Error")
          }
-    }
+    } 
   }
-
-  
+ 
+  const getQuizzes = async() => {
+    try{
+      const response = await axios.get(`http://localhost:8000/getQuizzes/${classId}`)
+      console.log(response.data);
+      setQuiz(response.data);
+    }
+    catch(error){
+      console.log("Error: ", error)
+    }
+  }  
 
   useEffect(() => {
-    getLessons();
-  } , [classId])
+    if(classId){
+      getLessons();
+      getQuizzes();
+    }
+    console.log("Class ID changed:", classId);
+  }, [classId])
 
 
   const filteredMaterials = useMemo(() => {
@@ -117,6 +132,7 @@ export default function SelectedSubject() {
                 materialId={lesson.id} 
                 creationDate ={lesson.createdAt}
                 materialType ={lesson.type}
+                classId = {classId}
               />
             ))
           ) : (
@@ -129,6 +145,31 @@ export default function SelectedSubject() {
         <div className="w-3/4 sm:w-[80%] mt-10">
           <h2 className="text-[#F5C45E] font-bold text-2xl">{termName}'s Quizzes</h2>
         </div>
+
+        <div className="flex flex-wrap justify-between w-3/4 sm:w-[80%]">
+            <p className="text-red-800">{classId}</p>
+          {materials.length > 0 && quiz.length > 0 ? (
+            quiz.map((quiz) => {
+              const lesson = materials.find((m) => m.id === quiz.lesson_id);
+              const lessonTitle = lesson ? lesson.title : "Unknown Lesson";
+              console.log(lessonTitle)
+              return(
+                <QuizCard 
+                key={quiz.id} 
+                quizId={quiz.id} 
+                lessonTitle={lessonTitle}
+                quizTitle={quiz.title} 
+                createdAt={quiz.created_at}
+              />
+              )
+            })
+          ) : (
+            <div className="text-gray-500 text-center w-full py-6">
+              No Quiz available for this term yet
+            </div>
+          )}
+        </div>
+
 
         
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Upload a Material" panelStyle={panelStyle}>

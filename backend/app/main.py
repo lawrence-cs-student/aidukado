@@ -9,7 +9,9 @@ from .routers import (
     user,
     subject,
     classes,
-    class_enrollment
+    class_enrollment,
+    quiz,
+    student_quiz_progress
 )
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,7 +29,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 @app.middleware("http")
-@limiter.limit("100/hour")  # Each IP can only send 100 requests per hour
+@limiter.limit("1000/hour")  # Each IP can only send 100 requests per hour
 async def global_rate_limit(request: Request, call_next):
     return await call_next(request)
 
@@ -47,4 +49,7 @@ app.include_router(class_enrollment.router)
 app.include_router(material.router)
 app.include_router(post_test.router)
 app.include_router(logout.router)
+app.include_router(quiz.router)
+app.include_router(student_quiz_progress.router)
+
 

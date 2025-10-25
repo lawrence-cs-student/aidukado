@@ -18,3 +18,4 @@ class Classes(Base):
     user_teacher = relationship("Users", back_populates="classes_")
     class_students = relationship("ClassEnrollment", back_populates="enrolled_class")
     materials = relationship("ClassMaterial", back_populates="class_")
+    quiz = relationship("Quiz", back_populates="classes" )

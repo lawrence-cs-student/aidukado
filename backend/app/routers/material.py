@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, HTTPException, Depends, File, Form, UploadFile
+from fastapi import APIRouter, HTTPException, Depends, File, Form, UploadFile, Query
 from typing import List
 from sqlalchemy.orm import Session, load_only
 from app.database import SessionLocal
@@ -8,6 +8,11 @@ from app.schemas.material import MaterialCreate, MaterialOut, MaterialTitleOut
 from app.utils.r2_helper import upload_file, generate_presigned_url
 from app.utils.extract_text_from_file import extract_text_from_file
 from app.models import ClassMaterial, LessonContent, Classes
+from ..utils.extractors import extract_pdf_text, extract_document_text
+from ..utils.generate_pretest import generate_pretest
+from ..utils.generate_summary import generate_summary
+import requests
+
 
 
 router = APIRouter(prefix="/class_material", tags=["class_material"])
@@ -76,6 +81,7 @@ async def upload_material(metadata: str = Form(...), file: UploadFile = File(...
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/getByClassId/{class_id}", response_model=list[MaterialTitleOut])
+
 def get_lessons_by_class(class_id: int, db: Session = Depends(get_db)):
     
     class_exist = db.query(Classes).filter(Classes.id == class_id).first()
@@ -98,6 +104,7 @@ def get_lessons_by_class(class_id: int, db: Session = Depends(get_db)):
         
     
 @router.get("/getLessonById/{lesson_id}", response_model=MaterialOut, response_model_by_alias=True)
+
 def get_lesson_by_id(lesson_id: int, db: Session = Depends(get_db)):
     lesson = db.query(ClassMaterial).filter(ClassMaterial.id == lesson_id).first()
         
@@ -120,6 +127,69 @@ def get_lesson_by_id(lesson_id: int, db: Session = Depends(get_db)):
         "due_date": lesson.due_date,
         "total_score": lesson.total_score
     }
+
+@router.post("/getQuiz/{lesson_id}")
+
+async def generate_quiz(lesson_id: int, items: int = Query(...), type: str = Query(...), db: Session = Depends(get_db)):
+    lesson = db.query(ClassMaterial).filter(ClassMaterial.id == lesson_id).first()
+
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    filename = lesson.file_url
+
+    if not (filename.lower().endswith(".pdf") or filename.lower().endswith(".docx") or filename.lower().endswith(".doc")):
+        raise HTTPException(status_code=400, detail="Only .pdf, .docx, and .doc files are allowed")
+
+    # ✅ Generate a presigned URL to access the actual file
+    file_url = generate_presigned_url(filename)
+    response = requests.get(file_url)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to download lesson file")
+
+    contents = response.content
+
+    if filename.lower().endswith(".pdf"):
+        text = extract_pdf_text(contents)
+    else:
+        text = extract_document_text(contents)
+
+    # ✅ Generate pretest questions
+    questions = generate_pretest(text, items, type)
+
+    return {"pretest": questions}
+
+@router.post("/getSummary/{lesson_id}")
+async def generate_quiz(lesson_id: int, db: Session = Depends(get_db)):
+    lesson = db.query(ClassMaterial).filter(ClassMaterial.id == lesson_id).first()
+
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    filename = lesson.file_url
+
+    if not (filename.lower().endswith(".pdf") or filename.lower().endswith(".docx") or filename.lower().endswith(".doc")):
+        raise HTTPException(status_code=400, detail="Only .pdf, .docx, and .doc files are allowed")
+
+    # ✅ Generate a presigned URL to access the actual file
+    file_url = generate_presigned_url(filename)
+    response = requests.get(file_url)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to download lesson file")
+
+    contents = response.content
+
+    if filename.lower().endswith(".pdf"):
+        text = extract_pdf_text(contents)
+    else:
+        text = extract_document_text(contents)
+
+    # ✅ Generate pretest questions
+    summary = generate_summary(text)
+
+    return {"summary": summary}
 
 # @router.patch("/editLesson")
 # def edit_lesson(lesson_id: int, db: Session = Depends(get_db)):
