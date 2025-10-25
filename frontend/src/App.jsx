@@ -82,7 +82,7 @@ function AppContent() {
 
 
           <Route path='/selectedClass/:classId/:term' element={<SelectedClass />}/>
-          <Route path='/selectedLesson/:lessonId' element={<SelectedLesson />} />
+          <Route path='/selectedLesson/:materialId/:materialType' element={<SelectedLesson />} />
           <Route path='/termPage' element={<TermPage />} />
           <Route path='/fileView' element={<FileView />} />
           

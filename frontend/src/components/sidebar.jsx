@@ -17,9 +17,9 @@ import axios from "axios";
 
 export default function Sidebar() {
 
-  //const userRole = useUserStore((state) => state.userRole)
-  //const clearUserRole = useUserStore((state) => state.clearUser)
-  const userRole = "admin";
+  const userRole = useUserStore((state) => state.userRole)
+  const clearUserRole = useUserStore((state) => state.clearUser)
+  // const userRole = "admin";
   const navigate = useNavigate();
 
   
@@ -71,10 +71,6 @@ export default function Sidebar() {
           <h2 className="font-bold">Dashboard</h2>
         </NavLink>
 
-        <NavLink to="/teacherClasses" className={linkClasses}>
-          <MdAnalytics size={32} />
-          <h2 className="font-bold">My Classes</h2>
-        </NavLink>
 
         {userRole == "admin" && (
           <NavLink to="/userManagement" className={linkClasses}>
@@ -106,10 +102,6 @@ export default function Sidebar() {
 
         
 
-        
-
-        
-
         {/* {userRole == "student" && (
           <NavLink to="/subjects" className={linkClasses}>
             <MdAnalytics size={32} />
@@ -137,6 +129,7 @@ export default function Sidebar() {
             <h2 className="font-bold">My Classes</h2>
           </NavLink>
         )}
+
       </div>
 
       <div className="flex flex-col space-y-4 p-[15%]">

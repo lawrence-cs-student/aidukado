@@ -108,15 +108,15 @@ export default function SelectedSubject() {
         </div>
         
         <div className="flex flex-wrap justify-between w-3/4 sm:w-[80%]">
-            <p className="text-red-800">{classId}</p>
+          
           {filteredMaterials.length > 0 ? (
-            filteredMaterials.map((lesson) => (
+            filteredMaterials.map((material) => (
               <LessonCard 
-                key={lesson.id} 
-                materialName={lesson.title} 
-                materialId={lesson.id} 
-                creationDate ={lesson.createdAt}
-                materialType ={lesson.type}
+                key={material.id} 
+                materialName={material.title} 
+                materialId={material.id} 
+                creationDate ={material.createdAt}
+                materialType ={material.type}
               />
             ))
           ) : (

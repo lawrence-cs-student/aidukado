@@ -25,13 +25,13 @@ async def submit_file(metadata: str = Form(...), file: UploadFile = File(...), d
 
         submission_data = SubmissionCreate(
             material_id=metadata_dict["materialId"],
-            student_id=metadata_dict["userId"],
+            student_id=metadata_dict["studentId"],
             type=metadata_dict["type"],
         ) 
         
         file_bytes = await file.read()
 
-        folder = submission_data.type
+        folder = f"submission/{submission_data.type}"
         file_key = upload_file(file_bytes, file.filename, folder)
 
         submission = StudentSubmission(

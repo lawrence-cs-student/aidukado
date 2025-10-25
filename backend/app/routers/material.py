@@ -97,28 +97,28 @@ def get_lessons_by_class(class_id: int, db: Session = Depends(get_db)):
     return [MaterialTitleOut.model_validate(lesson) for lesson in lessons]
         
     
-@router.get("/getLessonById/{lesson_id}", response_model=MaterialOut, response_model_by_alias=True)
-def get_lesson_by_id(lesson_id: int, db: Session = Depends(get_db)):
-    lesson = db.query(ClassMaterial).filter(ClassMaterial.id == lesson_id).first()
+@router.get("/getMaterialById/{material_id}", response_model=MaterialOut, response_model_by_alias=True)
+def get_lesson_by_id(material_id: int, db: Session = Depends(get_db)):
+    material = db.query(ClassMaterial).filter(ClassMaterial.id == material_id).first()
         
-    if not lesson:
+    if not material:
         raise HTTPException(status_code=404, detail="Lesson not Found")
     
-    if not lesson.file_url:
+    if not material.file_url:
         raise HTTPException(status_code=400, detail="Lesson has no file URL")
     
-    file_key = lesson.file_url
+    file_key = material.file_url
     file_url = generate_presigned_url(file_key)
     print(file_key)
     
     return {
-        "title": lesson.title,
-        "description": lesson.description,
+        "title": material.title,
+        "description": material.description,
         "file_key": file_key,
         "file_url": file_url,
-        "type": lesson.type,
-        "due_date": lesson.due_date,
-        "total_score": lesson.total_score
+        "type": material.type,
+        "due_date": material.due_date,
+        "total_score": material.total_score
     }
 
 # @router.patch("/editLesson")

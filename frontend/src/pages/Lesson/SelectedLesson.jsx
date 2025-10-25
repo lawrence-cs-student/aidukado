@@ -11,7 +11,7 @@ import TaskViewer from "../../components/TaskViewer";
 
 export default function SelectedLesson() {
 
-    const {lessonId} = useParams();
+    const { materialId, materialType} = useParams();
 
     const [lesson, setLesson] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
@@ -25,7 +25,7 @@ export default function SelectedLesson() {
 
     const getFileUrl = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/class_material/getLessonById/${lessonId}`)
+            const response = await axios.get(`http://localhost:8000/class_material/getMaterialById/${materialId}`)
 
             setLesson(response.data)
             console.log(response.data)
@@ -40,7 +40,7 @@ export default function SelectedLesson() {
 
     useEffect(() => {
         getFileUrl();
-    }, [lessonId])
+    }, [materialId])
 
     
     const fileUrl = lesson?.fileUrl || "";
@@ -70,6 +70,8 @@ export default function SelectedLesson() {
             )}
             {lessonType != "lesson" && (
                 <TaskViewer 
+                    materialId={materialId}
+                    materialType={materialType}
                     fileExtension={fileExtension}
                     fileUrl={fileUrl}
                     title={title}
