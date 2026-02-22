@@ -14,7 +14,7 @@ import { LuPlus, LuUpload } from "react-icons/lu";
 export default function ClassManagement() {
 
     const classesColumns = [
-        { id: 1, name: "ID", key: "id" },
+        //{ id: 1, name: "ID", key: "id" },
         { id: 2, name: "Course Code", key: "name" },
         { id: 3, name: "Course Description", key: "subjectName" },
         { id: 4, name: "Teacher Name", key: "teacherName" },

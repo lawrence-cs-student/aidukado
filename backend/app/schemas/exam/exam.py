@@ -37,6 +37,7 @@ class CreateExam(BaseModel):
     class_material_ids: Optional[List[int]] = []
     lesson_ids: List[int] = []
     closing_time: datetime
+    opening_time: datetime
     
     @validator('closing_time', pre=True)
     def parse_closing_time(cls, value):
@@ -97,6 +98,7 @@ class ExamOut(BaseModel):
     shuffle_questions: bool
     created_at: datetime
     updated_at: Optional[datetime] = None
+    opening_time:datetime
     
     class Config:
         from_attributes = True

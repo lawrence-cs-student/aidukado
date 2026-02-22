@@ -16,7 +16,9 @@ export default function AssignQuiz({
   instructions = "",
   duration = 0,
   assessment_type = "",
-  closing_time = "",
+  opening_time="",
+  closing_time = ""
+  
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editableQuestions, setEditableQuestions] = useState([]);
@@ -104,9 +106,10 @@ export default function AssignQuiz({
       return alert("Select at least one student");
 
     const formattedClosingTime = closing_time ? new Date(closing_time).toISOString() : null;
+    const formattedOpeningTime = opening_time ? new Date(opening_time).toISOString() : null;
     
     // Also set opening_time to current time
-    const openingTime = new Date().toISOString();
+    //const openingTime = new Date().toISOString();
 
     const payload = {
       lesson_id,
@@ -120,9 +123,10 @@ export default function AssignQuiz({
       assessment_type,
       term_id,
       assigned_students: selectedStudents,
-      opening_time: openingTime,
+      opening_time: formattedOpeningTime,
       closing_time: formattedClosingTime,
     };
+    console.log("payload", payload)
 
     try {
       await axios.post(
@@ -138,6 +142,8 @@ export default function AssignQuiz({
       alert(err.response?.data?.detail || "Assignment failed");
     }
   };
+
+  
 
   /* =========================
      Print Quiz

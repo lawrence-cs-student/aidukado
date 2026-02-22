@@ -51,6 +51,7 @@ async def generate_summary_endpoint(
     
     # Save to database (primary storage)
     lesson.summary = generated_summary
+    print ("generated sumary:", generated_summary)
     db.commit()
     
     return {

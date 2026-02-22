@@ -21,9 +21,12 @@ export default function AIQuiz() {
     question_type: "",
     assessment_type: "",
     error: "",
+    opening_time: "",
     closing_time: "",
+    
   });
 
+  console.log(formData);
   // Validation helper
   const validateForm = () => {
     const { title, items, duration, question_type, assessment_type } = formData;
@@ -108,6 +111,7 @@ export default function AIQuiz() {
       setLoading(false);
     }
   };
+  
 
   // Render based on state
   return (
@@ -136,6 +140,7 @@ export default function AIQuiz() {
             duration={formData.duration} 
             assessment_type={formData.assessment_type}
             closing_time={formData.closing_time}
+            opening_time={formData.opening_time}
           />
         </div>
       )}

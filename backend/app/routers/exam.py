@@ -63,6 +63,7 @@ async def get_exams_for_class(
         query = db.query(Exam).filter(
             Exam.class_id == class_id,
             Exam.term_id == term_id
+            
         )
         
         # Filter by archive status if not requesting archived exams
@@ -97,7 +98,8 @@ async def get_student_exams_for_class(
         ).filter(
             StudentExamProgress.student_id == student_id,
             Exam.class_id == class_id,
-            Exam.is_archive == False
+            Exam.is_archive == False,
+            Exam.opening_time <= datetime.now(timezone.utc)
         )
         
         if term_id is not None:
@@ -480,7 +482,7 @@ def assign_exam(exam: CreateExam, db: Session = Depends(get_db)):
             created_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc),
             closing_time=exam.closing_time,  
-            
+            opening_time=exam.opening_time
         )
 
         db.add(new_exam)

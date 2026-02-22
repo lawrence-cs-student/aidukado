@@ -29,6 +29,7 @@ export default function AssignExam({
   classId = "",
   termId = "",
   closing_time = "", // ADDED: Closing time prop
+  opening_time = "",
   onReset = () => {}
 }) {
   const navigate = useNavigate();
@@ -217,6 +218,10 @@ export default function AssignExam({
     if (selectedStudents.length === 0) {
       return "Select at least one student";
     }
+
+    if (!opening_time || opening_time.trim().length === 0) {
+      return "Opening time is required";
+    }
     
     // Validate closing_time
     if (!closing_time || closing_time.trim().length === 0) {
@@ -284,6 +289,15 @@ export default function AssignExam({
         }
       }
 
+      let formattedOpeningTime = opening_time;
+      if (opening_time && !opening_time.includes('T')) {
+        // Convert to ISO format if needed
+        const date = new Date(opening_time);
+        if (!isNaN(date.getTime())) {
+          formattedOpeningTime = date.toISOString();
+        }
+      }
+
       const payload = {
         title: title.trim(),
         total_points: totalPoints,
@@ -298,9 +312,11 @@ export default function AssignExam({
         assigned_students: selectedStudents.map(id => parseInt(id, 10)),
         class_material_ids: [],
         lesson_ids: lesson_ids.map(id => parseInt(id, 10)),
-        closing_time: formattedClosingTime // CRITICAL: Include closing_time
+        closing_time: formattedClosingTime, // CRITICAL: Include closing_time
+        opening_time: formattedOpeningTime
       };
 
+      
       console.log("Assigning exam with payload:", JSON.stringify(payload, null, 2));
       console.log("Closing time being sent:", formattedClosingTime);
 
@@ -539,6 +555,13 @@ export default function AssignExam({
               <div className="flex items-center space-x-4">
                 <button
                   onClick={handleBackToTOS}
+                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-200 backdrop-blur-sm border border-white/20"
+                  title="Back to TOS"
+                >
+                  <FiArrowLeft className="text-white text-lg" />
+                </button>
+                <button
+                  onClick={() => alert(opening_time)}
                   className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-200 backdrop-blur-sm border border-white/20"
                   title="Back to TOS"
                 >

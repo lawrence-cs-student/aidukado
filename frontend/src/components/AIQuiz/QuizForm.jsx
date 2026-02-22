@@ -2,12 +2,17 @@ import ClassicButton from "../classicButton";
 import { LuWand } from "react-icons/lu";
 import { useState, useEffect } from 'react';
 
+
 export default function QuizForm({ formData, onChange, onSubmit, loading }) {
   const inputClass = `w-full p-2 rounded-lg border border-gray-300 bg-gray-100 text-md text-[#102E50] 
                         focus:outline-none focus:ring-2 focus:ring-[#102E50]/40 transition 
                         mb-4 duration-200`;
   const labelClass = "text-[#102E50] font-bold mb-1 block";
 
+  //const getDefaultTime = () => new Date().toISOString().slice(0, 16);
+  const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+  .toISOString()
+  .slice(0, 16);
   // Set default datetime (tomorrow at 23:59)
   const setDefaultDateTime = () => {
     const tomorrow = new Date();
@@ -59,10 +64,15 @@ export default function QuizForm({ formData, onChange, onSubmit, loading }) {
 
   // Initialize closing_time with default value
   useEffect(() => {
-    if (!formData.closing_time) {
-      handleChange('closing_time', setDefaultDateTime());
+    if (!formData.closing_time || !formData.start_time) {
+      onChange({
+        ...formData,
+        closing_time: setDefaultDateTime(),
+        opening_time: now,
+      });
     }
   }, []);
+  
 
   return (
     <form 
@@ -129,6 +139,30 @@ export default function QuizForm({ formData, onChange, onSubmit, loading }) {
         required
       />
 
+      <div className="mb-4 p-4 bg-[#0B2239]/10 rounded-lg border border-[#102E50]/20 text-white">
+        <div className="flex items-center gap-2 mb-2">
+          <svg className="w-5 h-5 text-[#102E50]" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+          </svg>
+          <label className="font-semibold text-[#102E50]">
+            Start Time : <span className="text-red-500">*</span>
+          </label>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="datetime-local"
+            value={formData.opening_time || now}
+            onChange={(e) => handleChange('opening_time', e.target.value)}
+            className="flex-1 px-4 py-3 border border-[#102E50] rounded-lg bg-[#102E50]
+              focus:outline-none focus:ring-2 focus:ring-[#E78B48] focus:border-transparent
+              text-white placeholder:text-white/70
+              shadow-inner"
+            style={{ colorScheme: 'dark' }}
+            required
+          />
+        </div>
+      </div>
+
       {/* Closing Time Section - Exact copy from TaskReopenModal */}
       <div className="mb-4 p-4 bg-[#0B2239]/10 rounded-lg border border-[#102E50]/20">
         <div className="flex items-center gap-2 mb-2">
@@ -149,6 +183,7 @@ export default function QuizForm({ formData, onChange, onSubmit, loading }) {
               focus:outline-none focus:ring-2 focus:ring-[#E78B48] focus:border-transparent
               text-white placeholder:text-white/70
               shadow-inner"
+            style={{ colorScheme: 'dark' }}
             required
           />
         </div>

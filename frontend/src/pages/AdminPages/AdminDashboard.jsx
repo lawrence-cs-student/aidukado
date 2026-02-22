@@ -5,7 +5,7 @@ import Table from "../../components/Table";
 
 export default function AuditLogs() {
   const auditLogColumns = [
-    { id: 1, name: "ID", key: "id" },
+    //{ id: 1, name: "ID", key: "id" },
     { id: 2, name: "Table", key: "table_name" },
     { id: 3, name: "Record ID", key: "record_id" },
     { id: 4, name: "Operation", key: "operation_type" },

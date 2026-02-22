@@ -82,6 +82,7 @@ export default function SelectedClass() {
       }
 
       setQuizzes(response.data);
+      
     } catch (error) {
       console.log("Error fetching quizzes:", error);
     }
@@ -137,6 +138,8 @@ export default function SelectedClass() {
     }
     
   }, [classId, term, location.state?.refresh]);
+
+  console.log("QUIZZES:",quizzes)
 
   const filteredMaterials = useMemo(() => {
     return materials.filter((lesson) => lesson.termId === Number(term));

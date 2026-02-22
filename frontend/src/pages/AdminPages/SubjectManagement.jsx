@@ -14,9 +14,9 @@ import { LuPlus } from "react-icons/lu";
 export default function SubjectManagement() {
     
     const subjectColumns = [
-        {id: 1, name: "ID", key: "id"},
-        {id: 2, name: "Course Description", key: "name"},
-        {id: 3, name: "", key: "description"}
+        //{id: 1, name: "ID", key: "id"},
+        {id: 2, name: "Course Code", key: "name"},
+        {id: 3, name: "Course Title", key: "description"}
     ];
 
     const [query, setQuery] = useState("");

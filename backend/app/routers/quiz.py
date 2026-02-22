@@ -164,6 +164,7 @@ def get_student_quizzes(
             Quiz.term_id == term,
             Quiz.is_archive == False,
             StudentQuizProgress.student_id == student_id,
+            Quiz.opening_time <= datetime.now(timezone.utc)
         )
         .order_by(desc(Quiz.created_at))
         .all()

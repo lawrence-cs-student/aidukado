@@ -174,7 +174,7 @@ export default function UploadLesson({ setIsOpen, onSuccess, term, setSuccessMes
       
       <div className="mb-2">
         <span className="text-xs text-[#102E50]/80 mt-1">Max Size: 20mb</span>
-        <FileUploader type=".pdf, .doc, .docx" handleFileChange={handleFileChange} />
+        <FileUploader type=".pdf, .doc, .docx, .pptx, .ppt" handleFileChange={handleFileChange} />
       </div>
 
       <div className="space-y-1">

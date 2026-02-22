@@ -33,9 +33,11 @@ export default function AIExam() {
     hours: {},
     closing_time: "",
     error: "",
-    success: ""
+    success: "",
+    opening_time: ""
   });
 
+  const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
   // Set default datetime (tomorrow at 23:59)
   const setDefaultDateTime = () => {
     const tomorrow = new Date();
@@ -109,8 +111,10 @@ export default function AIExam() {
         setFormData(prev => ({ 
           ...prev, 
           hours: initialHours,
-          closing_time: setDefaultDateTime()
+          closing_time: setDefaultDateTime(),
+          opening_time: now
         }));
+
         
       } catch (error) {
         console.error("Failed to fetch lessons:", error);
@@ -234,7 +238,7 @@ export default function AIExam() {
           lesson_id: lesson.id,
           title: lesson.title,
           hours: parseFloat(formData.hours[lesson.id]),
-        })),
+        }))
       };
 
       console.log("Sending TOS payload:", payload);
@@ -371,10 +375,11 @@ export default function AIExam() {
       hours: {},
       closing_time: setDefaultDateTime(),
       error: "",
-      success: ""
+      success: "",
+      opening_time:""
     });
   };
-
+  
   // Filter lessons (only type "lesson")
   const filteredLessons = lessons.filter((lesson) => lesson.type === "lesson");
 
@@ -383,6 +388,8 @@ export default function AIExam() {
     const numHours = parseFloat(hours);
     return sum + (isNaN(numHours) ? 0 : numHours);
   }, 0);
+
+  
 
   return (
     <div className="h-auto min-h-screen w-full flex items-center justify-center p-4 bg-gray-50">
@@ -518,6 +525,35 @@ export default function AIExam() {
                       disabled={generating}
                     />
                     <p className="text-xs text-gray-500">Minimum: 1, Maximum: 100</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-4 bg-[#0B2239]/10 rounded-lg border border-[#102E50]/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FaCalendarAlt className="w-5 h-5 text-[#102E50]" />
+                    <label className="font-semibold text-[#102E50]">
+                      Opening Time:
+                    </label>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="datetime-local"
+                      value={formData.opening_time || now}
+                      onChange={(e) => handleFormChange('opening_time', e.target.value)}
+                      className="flex-1 px-4 py-3 border border-[#102E50] rounded-lg bg-[#102E50]
+                        focus:outline-none focus:ring-2 focus:ring-[#E78B48] focus:border-transparent
+                        text-white placeholder:text-white/70
+                        shadow-inner"
+                      disabled={generating}
+                      required
+                    />
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    {formData.opening_time && (
+                      <p className="text-xs font-medium text-[#102E50]">
+                        {formatDateTime(formData.opening_time)}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -672,6 +708,7 @@ export default function AIExam() {
             classId={classId}
             termId={termId}
             onReset={handleReset}
+            opening_time={formData.opening_time}
           />
         </div>
       )}
